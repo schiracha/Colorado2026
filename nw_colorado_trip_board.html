@@ -1,0 +1,1786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Northwest Colorado + Longmont Trip Board</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Yeseva+One&family=Work+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#1c2620;
+    --paper:#eee7d3;
+    --paper-dim:#e2dabe;
+    --pine:#2c4235;
+    --pine-deep:#1a2b21;
+    --pine-mid:#4c6b56;
+    --ochre:#c1912b;
+    --ochre-deep:#8f6a1c;
+    --rust:#a84c2b;
+    --rust-deep:#7c3720;
+    --slate:#5c6d66;
+    --slate-deep:#3d4a45;
+    --line:#c9bd9a;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{ background:var(--pine-deep); font-family:'Work Sans', sans-serif; color:var(--ink); min-height:100vh; }
+  .contours{
+    position:fixed; inset:0; z-index:0; opacity:.16; pointer-events:none;
+    background:
+      repeating-radial-gradient(circle at 15% 20%, transparent 0 18px, rgba(238,231,211,.5) 19px 20px, transparent 21px 60px),
+      repeating-radial-gradient(circle at 85% 75%, transparent 0 24px, rgba(238,231,211,.4) 25px 26px, transparent 27px 70px);
+  }
+  .wrap{position:relative; z-index:1; max-width:1020px; margin:0 auto; padding:28px 20px 60px;}
+
+  header.hero{
+    padding:26px 26px 22px;
+    background:linear-gradient(180deg, var(--pine) 0%, var(--pine-deep) 100%);
+    border-radius:14px; border:1px solid rgba(238,231,211,.15); margin-bottom:18px;
+  }
+  .eyebrow{ font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ochre); margin:0 0 8px; }
+  h1{ font-family:'Yeseva One', serif; color:var(--paper); font-size:clamp(26px, 4.6vw, 38px); margin:0 0 8px; line-height:1.05; }
+  .hero p{ color:#c9d3ca; margin:0; font-size:14px; max-width:64ch; line-height:1.5; }
+
+  /* trip anchors strip — fixed logistics, not suggestions */
+  .anchors{ display:grid; grid-template-columns:repeat(auto-fit, minmax(190px,1fr)); gap:10px; margin-bottom:22px; }
+  .anchor{
+    background:var(--paper); border-radius:10px; padding:13px 14px; border-left:4px solid var(--rust);
+  }
+  .anchor .date{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--rust-deep); letter-spacing:.05em; text-transform:uppercase; margin-bottom:3px; }
+  .anchor .what{ font-size:13.5px; font-weight:700; color:var(--pine-deep); margin-bottom:3px; }
+  .anchor .sub{ font-size:11.5px; color:var(--slate); line-height:1.4; }
+  .anchorlink{
+    display:inline-block; margin-top:8px; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700;
+    color:#fff; background:var(--ochre-deep); padding:5px 10px; border-radius:6px; text-decoration:none;
+  }
+  .anchorlink:hover{ background:var(--rust-deep); }
+
+  /* reveal button */
+  /* weather section */
+  .weathersection{ margin-bottom:20px; }
+  .weatherhead{ display:flex; justify-content:space-between; align-items:flex-end; gap:14px; margin:0 2px 10px; flex-wrap:wrap; }
+  .weatherhead > div{ display:flex; flex-direction:column; gap:2px; }
+  .weathereyebrow{ font-family:'JetBrains Mono', monospace; font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ochre); }
+  .weathernote{ font-size:11.5px; color:#c9d3ca; font-family:'JetBrains Mono', monospace; }
+  .refreshbtn{
+    font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700; letter-spacing:.03em;
+    background:var(--pine); color:var(--paper); border:1px solid rgba(238,231,211,.25); border-radius:8px;
+    padding:8px 13px; cursor:pointer; display:inline-flex; align-items:center; gap:7px; transition:background .15s ease;
+  }
+  .refreshbtn:hover{ background:var(--pine-mid); }
+  .refreshbtn:disabled{ opacity:.6; cursor:default; }
+  .refresh-arrow{ display:inline-block; transition:transform .5s ease; }
+  .refreshbtn.spinning .refresh-arrow{ animation:spin 0.8s linear infinite; }
+  @keyframes spin{ from{transform:rotate(0deg);} to{transform:rotate(360deg);} }
+
+  .weathercards{ display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:14px; }
+  .weathercard{ background:var(--paper); border-radius:10px; padding:16px 18px; border-left:5px solid #7a93a8; box-shadow:0 6px 18px rgba(0,0,0,.22); }
+  .wc-top{ display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:2px; }
+  .wc-top h4{ margin:0; font-size:15.5px; font-weight:700; color:var(--pine-deep); }
+  .wc-badge{
+    font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:.06em; text-transform:uppercase;
+    padding:3px 8px; border-radius:20px; background:#ded2b0; color:var(--slate-deep); white-space:nowrap;
+  }
+  .wc-badge.live{ background:#cfe6c8; color:#2c4235; }
+  .wc-dates{ font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--slate); display:block; margin-bottom:10px; }
+  .wc-temps{ display:flex; gap:18px; margin-bottom:10px; border-top:1px dashed var(--line); border-bottom:1px dashed var(--line); padding:9px 0; }
+  .wc-temp{ display:flex; flex-direction:column; }
+  .wc-val{ font-family:'JetBrains Mono', monospace; font-size:18px; font-weight:700; color:var(--pine-deep); }
+  .wc-lbl{ font-size:10px; color:var(--slate); font-family:'JetBrains Mono', monospace; margin-top:2px; }
+  .wc-desc{ font-size:12.5px; line-height:1.55; color:#3a3a30; margin:0 0 10px; }
+  .wc-tags{ display:flex; gap:6px; flex-wrap:wrap; }
+
+  .wc-daylist{ display:flex; gap:8px; overflow-x:auto; padding:10px 0; margin-bottom:6px; border-top:1px dashed var(--line); border-bottom:1px dashed var(--line); }
+  .wc-day{ flex:0 0 auto; min-width:64px; text-align:center; background:var(--paper-dim); border-radius:8px; padding:8px 6px; }
+  .wc-day .d-date{ font-family:'JetBrains Mono', monospace; font-size:10px; color:var(--slate); }
+  .wc-day .d-icon{ font-size:18px; margin:4px 0 2px; }
+  .wc-day .d-hi{ font-size:13px; font-weight:700; color:var(--pine-deep); }
+  .wc-day .d-lo{ font-size:11px; color:var(--slate); }
+  .wc-day .d-precip{ font-size:9.5px; color:var(--ochre-deep); margin-top:2px; font-family:'JetBrains Mono', monospace; }
+
+  .wc-lastchecked{ text-align:right; font-family:'JetBrains Mono', monospace; font-size:10.5px; color:#a9b3ab; margin:8px 2px 0; }
+
+  /* reveal buttons — one per type */
+  .revealrow{ display:flex; gap:10px; margin-bottom:18px; flex-wrap:wrap; }
+  .revealbtn{
+    flex:1 1 180px;
+    display:flex; align-items:center; justify-content:center; gap:9px;
+    padding:15px; background:var(--pine); color:var(--paper-dim); border:1px solid rgba(238,231,211,.18); border-radius:10px;
+    font-family:'JetBrains Mono', monospace; font-size:13.5px; font-weight:700; letter-spacing:.02em;
+    cursor:pointer; transition:background .15s ease, color .15s ease;
+  }
+  .revealbtn .rb-icon{ font-size:16px; }
+  .revealbtn:hover{ background:var(--pine-mid); }
+  .revealbtn.active{ background:var(--ochre); color:var(--pine-deep); border-color:var(--ochre); }
+
+  #optionsArea{ display:none; }
+  #optionsArea.open{ display:block; }
+  #shoppingArea{ display:none; }
+  #shoppingArea.open{ display:block; }
+  #eventsArea{ display:none; }
+  #eventsArea.open{ display:block; }
+  #touristyArea{ display:none; }
+  #touristyArea.open{ display:block; }
+  #entertainmentArea{ display:none; }
+  #entertainmentArea.open{ display:block; }
+  #foodArea{ display:none; }
+  #foodArea.open{ display:block; }
+  #safetyArea{ display:none; }
+  #safetyArea.open{ display:block; }
+  #rentalArea{ display:none; }
+  #rentalArea.open{ display:block; }
+
+  .infoblock{
+    background:var(--paper); border-radius:12px; padding:20px 20px 18px; margin-bottom:14px;
+    border-left:5px solid var(--rust); box-shadow:0 6px 18px rgba(0,0,0,.22);
+  }
+  .infotitle{ font-family:'Yeseva One', serif; font-size:18px; color:var(--pine-deep); margin:0 0 8px; }
+  .infoblock > p.desc{ font-size:13px; line-height:1.6; margin:0 0 12px; color:#3a3a30; }
+  .infolist{ margin:0; padding-left:20px; }
+  .infolist li{ font-size:12.5px; line-height:1.65; margin-bottom:8px; color:#3a3a30; }
+  .infolist li b{ color:var(--pine-deep); }
+  .packgrid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
+  .packcol h4{ font-size:13.5px; margin:0 0 6px; color:var(--rust-deep); font-family:'JetBrains Mono', monospace; text-transform:uppercase; letter-spacing:.03em; }
+  .packcol ul{ margin:0; padding-left:18px; }
+  .packcol li{ font-size:12px; line-height:1.6; margin-bottom:5px; color:#3a3a30; }
+  .callout{
+    background:var(--paper-dim); border:1px dashed var(--ochre-deep); border-radius:8px;
+    padding:12px 15px; margin-bottom:14px;
+  }
+  .callout p.desc{ margin:0; font-size:12.5px; line-height:1.6; }
+
+  .foodblock{
+    background:var(--paper); border-radius:12px; padding:18px 18px 16px; margin-bottom:14px;
+    border-left:5px solid var(--pine-mid); box-shadow:0 6px 18px rgba(0,0,0,.22);
+  }
+  .foodblock.denver{ border-left-color:var(--ochre); }
+  .foodarea-title{
+    font-family:'Yeseva One', serif; font-size:17px; color:var(--pine-deep); margin:0 0 6px;
+  }
+  .pairswith{
+    display:flex; flex-wrap:wrap; gap:5px; margin-bottom:12px; padding-bottom:12px; border-bottom:1px dashed var(--line);
+  }
+  .pairswith .plabel{
+    font-family:'JetBrains Mono', monospace; font-size:9.5px; text-transform:uppercase; letter-spacing:.05em;
+    color:var(--slate); margin-right:2px; align-self:center;
+  }
+  .pairswith .ptag{
+    font-family:'JetBrains Mono', monospace; font-size:10px; background:var(--paper-dim); color:var(--slate-deep);
+    padding:3px 8px; border-radius:20px; border:1px solid var(--line);
+  }
+  .foodcard .toprow{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; margin-bottom:5px; }
+  .foodcard h4{ margin:0; font-size:15.5px; font-weight:700; color:var(--pine-deep); }
+  .foodrating{
+    font-size:12px; color:var(--ochre-deep); white-space:nowrap; font-family:'JetBrains Mono', monospace;
+    letter-spacing:-1px;
+  }
+  .foodrating b{ letter-spacing:normal; color:var(--pine-deep); margin-left:3px; }
+  .foodaddr{ font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--slate); margin-bottom:4px; }
+  .foodaddr .reviewcount{ color:var(--slate); }
+  .foodcard p.desc{ font-size:12.5px; line-height:1.55; margin:8px 0 12px; }
+  .foodbtnrow{ display:flex; gap:8px; }
+  .foodbtnrow a{
+    flex:1; text-align:center; font-family:'JetBrains Mono', monospace; font-size:11px; font-weight:700;
+    padding:7px 6px; border-radius:6px; text-decoration:none; border:1px solid var(--line);
+  }
+  .foodbtnrow a.websitebtn{ color:var(--pine-deep); background:var(--paper-dim); }
+  .foodbtnrow a.mapsbtn{ color:#fff; background:var(--ochre-deep); border-color:var(--ochre-deep); }
+
+  .placeholdercard{
+    background:var(--paper); border-radius:12px; padding:22px;
+    border:2px dashed var(--ochre-deep);
+  }
+  .placeholdertag{
+    display:inline-block; font-family:'JetBrains Mono', monospace; font-size:10px; letter-spacing:.08em; text-transform:uppercase;
+    background:var(--ochre-deep); color:#fff; padding:4px 10px; border-radius:20px; margin-bottom:12px;
+  }
+  .placeholdercard h3{ margin:0 0 8px; font-family:'Yeseva One', serif; font-size:20px; color:var(--pine-deep); }
+  .placeholdercard .desc{ margin:0 0 16px; }
+  .phgrid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:10px; margin-bottom:16px; }
+  .phfield{
+    display:flex; flex-direction:column; gap:2px; background:var(--paper-dim); border-radius:8px; padding:9px 12px;
+  }
+  .phlabel{ font-family:'JetBrains Mono', monospace; font-size:10px; text-transform:uppercase; letter-spacing:.05em; color:var(--slate); }
+  .phvalue{ font-size:13px; color:var(--pine-deep); font-weight:600; }
+  .phnote{
+    font-family:'JetBrains Mono', monospace; font-size:11.5px; color:var(--slate-deep); line-height:1.6;
+    border-top:1px dashed var(--line); padding-top:12px; margin:0;
+  }
+
+  .dateline{ font-family:'JetBrains Mono', monospace; font-size:11.5px; color:var(--rust-deep); font-weight:700; margin-bottom:6px; }
+  .warntag{ background:#f2d9cf; border-color:var(--rust); color:var(--rust-deep); font-weight:700; }
+  .eventfyi{
+    margin-top:16px; padding:12px 14px; background:rgba(238,231,211,.08); border:1px dashed rgba(238,231,211,.25);
+    border-radius:10px; color:#c9d3ca; font-size:11.5px; line-height:1.6; font-family:'JetBrains Mono', monospace;
+  }
+
+  .shoptabs{ display:flex; gap:8px; margin-bottom:10px; }
+  .shoptab{
+    font-family:'JetBrains Mono', monospace; font-size:12px; font-weight:700; letter-spacing:.03em;
+    padding:8px 14px; background:var(--paper); color:var(--slate-deep); border:1px solid var(--line); border-radius:20px;
+    cursor:pointer; transition:background .15s ease, color .15s ease;
+  }
+  .shoptab.active{ background:var(--pine); color:var(--paper); border-color:var(--pine); }
+  .shopnote{ font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#c9d3ca; margin:0 0 14px; line-height:1.5; }
+
+  .shopcard{ background:var(--paper); border-radius:10px; padding:16px 16px 14px; border-left:5px solid var(--slate); box-shadow:0 6px 18px rgba(0,0,0,.22); }
+  .shopcard .toprow{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;}
+  .shopcard h3{ margin:0; font-size:15.5px; font-weight:700; color:var(--pine-deep); line-height:1.25; }
+  .catpill{ font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:.06em; text-transform:uppercase; padding:3px 8px; border-radius:5px; white-space:nowrap; flex-shrink:0; color:#fff; }
+  .catpill.cat-western{ background:var(--rust-deep); }
+  .catpill.cat-walk{ background:var(--ochre-deep); }
+  .catpill.cat-mall{ background:var(--pine-mid); }
+  .catpill.cat-gift{ background:var(--slate-deep); }
+  .catpill.cat-market{ background:#4c6b56; }
+  .catpill.cat-festival{ background:var(--rust-deep); }
+  .catpill.cat-flea{ background:var(--ochre-deep); }
+  .catpill.cat-farm{ background:#7c5a2e; }
+  .catpill.cat-scenic{ background:#4c6b56; }
+  .catpill.cat-springs{ background:#3d7a8a; }
+  .catpill.cat-museum{ background:var(--slate-deep); }
+  .catpill.cat-amusement{ background:var(--rust-deep); }
+  .catpill.cat-garden{ background:#5c7a4c; }
+  .catpill.cat-music{ background:#4c6b56; }
+  .catpill.cat-dinner{ background:var(--rust-deep); }
+  .catpill.cat-immersive{ background:#5c4a8a; }
+  .catpill.cat-medical{ background:#a83232; }
+  .catpill.cat-dance{ background:#8f6a1c; }
+  .catpill.cat-bowling{ background:#6b5b3e; }
+  .catpill.cat-skating{ background:#2f6f8f; }
+  .shopaddr{ font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--slate); margin-bottom:6px; }
+  .shopbtnrow{ display:flex; gap:8px; margin-top:12px; }
+  .shopbtnrow a{
+    flex:1; text-align:center; font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700;
+    padding:8px 6px; border-radius:7px; text-decoration:none; border:1px solid var(--line);
+  }
+  .shopbtnrow a.websitebtn{ color:var(--pine-deep); background:var(--paper-dim); }
+  .shopbtnrow a.mapsbtn{ color:#fff; background:var(--ochre-deep); border-color:var(--ochre-deep); }
+  .shopbtnrow a.websitebtn:hover{ background:#d8cca4; }
+  .shopbtnrow a.mapsbtn:hover{ background:var(--rust-deep); }
+
+  .filterbar{
+    display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+    background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 16px; margin-bottom:16px;
+  }
+  .filtergroup{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .filtergroup .label{ font-size:11.5px; color:var(--slate); font-family:'JetBrains Mono', monospace; text-transform:uppercase; letter-spacing:.05em; margin-right:2px; }
+  .chip{
+    font-family:'JetBrains Mono', monospace; font-size:11.5px; padding:6px 11px; border-radius:20px;
+    border:1px solid var(--line); background:transparent; color:var(--slate-deep); cursor:pointer;
+    transition:background .15s ease, color .15s ease;
+  }
+  .chip.active{ background:var(--pine); color:var(--paper); border-color:var(--pine); }
+  .toggle{ display:inline-flex; align-items:center; gap:9px; cursor:pointer; user-select:none; font-family:'JetBrains Mono', monospace; font-size:12px; color:var(--pine-deep); }
+  .switch{ width:38px; height:21px; border-radius:11px; background:#b9ae8b; position:relative; transition:background .15s; }
+  .switch::after{ content:''; position:absolute; top:2px; left:2px; width:17px; height:17px; border-radius:50%; background:var(--paper); transition:left .15s; }
+  .toggle input{display:none;}
+  .toggle input:checked + .switch{background:var(--ochre-deep);}
+  .toggle input:checked + .switch::after{left:19px;}
+
+  .resultcount{ font-family:'JetBrains Mono', monospace; font-size:11.5px; color:#c9d3ca; margin:0 0 12px 2px; }
+
+  .cards{display:grid; grid-template-columns:repeat(auto-fill, minmax(270px,1fr)); gap:14px;}
+  .card{ background:var(--paper); border-radius:10px; padding:16px 16px 14px; border-left:5px solid var(--pine-mid); box-shadow:0 6px 18px rgba(0,0,0,.22); overflow:hidden; }
+  .card-art{ margin:-16px -16px 12px -16px; height:96px; }
+  .card-art svg{ width:100%; height:100%; display:block; }
+  .card.bike{border-left-color:var(--ochre);}
+  .card.town{border-left-color:var(--slate);}
+  .card.hidden{display:none;}
+  .card .toprow{display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;}
+  .card h3{ margin:0; font-size:16px; font-weight:700; color:var(--pine-deep); line-height:1.25; }
+  .typepill{ font-family:'JetBrains Mono', monospace; font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; padding:3px 7px; border-radius:5px; white-space:nowrap; flex-shrink:0; background:var(--pine-mid); color:#fff; }
+  .card.bike .typepill{background:var(--ochre-deep);}
+  .card.town .typepill{background:var(--slate-deep);}
+  .arealabel{ font-family:'JetBrains Mono', monospace; font-size:10.5px; color:var(--slate); margin-bottom:2px; }
+  .distline{ font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--pine-deep); margin-bottom:8px; }
+  .distlbl{ text-transform:uppercase; letter-spacing:.05em; color:var(--slate); font-size:9.5px; margin-right:5px; }
+  .stats{ display:flex; gap:10px; flex-wrap:wrap; font-family:'JetBrains Mono', monospace; font-size:11px; color:var(--slate); margin:0 0 10px; border-top:1px dashed var(--line); border-bottom:1px dashed var(--line); padding:7px 0; }
+  .stats b{color:var(--pine-deep);}
+  .card p.desc{font-size:13px; line-height:1.5; margin:0 0 10px; color:#3a3a30;}
+  .tags{display:flex; gap:6px; flex-wrap:wrap;}
+  .photolink{
+    display:inline-block; margin-top:11px; font-family:'JetBrains Mono', monospace; font-size:11.5px; font-weight:700;
+    color:var(--ochre-deep); text-decoration:none; border-bottom:1px solid var(--ochre-deep); padding-bottom:1px;
+  }
+  .photolink:hover{ color:var(--rust-deep); border-color:var(--rust-deep); }
+  .tag{ font-size:10.5px; font-family:'JetBrains Mono', monospace; padding:3px 8px; border-radius:20px; border:1px solid var(--line); color:var(--slate); }
+  .tag.kid{ background:#e4f0e0; border-color:#9fbf94; color:#2c4235; font-weight:700; }
+  .tag.diff-easy{background:#e4f0e0; border-color:#9fbf94; color:#2c4235;}
+  .tag.diff-moderate{background:#f6e7c9; border-color:var(--ochre); color:var(--ochre-deep);}
+  .tag.diff-strenuous{background:#f2d9cf; border-color:var(--rust); color:var(--rust-deep);}
+
+  footer.note{ margin-top:22px; padding:14px 16px; background:rgba(238,231,211,.08); border:1px dashed rgba(238,231,211,.25); border-radius:10px; color:#c9d3ca; font-size:12px; line-height:1.6; font-family:'JetBrains Mono', monospace; }
+
+  @media (max-width:600px){ .cards{grid-template-columns:1fr;} }
+</style>
+</head>
+<body>
+<div class="contours"></div>
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">Trip Board — Sept 25 – Oct 4</p>
+    <h1>Northwest Colorado + Longmont</h1>
+    <p>Steamboat Springs base, then down to Longmont for the wedding. No fixed daily plan — just the full set of hike and ride options, filterable, so you can pick each morning based on weather and energy.</p>
+  </header>
+
+  <div class="anchors">
+    <div class="anchor">
+      <div class="date">Sep 24</div>
+      <div class="what">Drive to Dulles (IAD) → park at Hyatt Regency → shuttle to terminal</div>
+      <div class="sub">Park-and-fly reservation via One Stop Parking, confirmed for Randall Schirra. Reservation #ROS849853 — QR code is in the confirmation email, have it ready to scan. <b>Hyatt Regency Dulles Airport</b>, 2300 Dulles Corner Blvd, Herndon, VA 20171. Shuttle pickup phone: (703) 713-1234. Important: check in at the hotel front desk before parking — confirm with staff exactly where to park, since the lot is shared with other businesses and not every spot is allotted to the Hyatt.</div>
+      <a class="anchorlink" href="https://www.google.com/maps/dir/?api=1&destination=2300+Dulles+Corner+Blvd%2C+Herndon%2C+VA+20171" target="_blank" rel="noopener">Directions to Hyatt Regency Dulles ↗</a>
+    </div>
+    <div class="anchor">
+      <div class="date">Sep 25</div>
+      <div class="what">Land at DEN (~12am) → rest at airport → drive to Steamboat Springs</div>
+      <div class="sub">Landing at midnight — before heading to baggage claim, ride the train to Concourse A while still airside and use the free 24/7 Rest &amp; Recharge lounge (Mezzanine Level, north side, near gates A39/A40 — cushioned recliners, privacy partitions, charging). Once you leave through security to get bags/rental car you can't go back without a same-day boarding pass, so rest first. 24-hr food airside: McDonald's &amp; Sunset Loop Market, Concourse B. Then baggage claim, breakfast, and the ~180 mi / 3–3.5 hr drive via I-70 to Silverthorne, CO-9 to Kremmling, US-40 over Rabbit Ears Pass.</div>
+      <a class="anchorlink" href="https://www.google.com/maps/dir/?api=1&destination=1485+Pine+Grove+Rd%2C+Steamboat+Springs%2C+CO+80487" target="_blank" rel="noopener" style="margin-right:6px;">Directions to hotel ↗</a>
+      <a class="anchorlink" href="https://www.alamo.com/en_US/car-rental-app.html" target="_blank" rel="noopener">Get the Alamo App ↗</a>
+    </div>
+    <div class="anchor">
+      <div class="date">Sep 25 – Oct 1</div>
+      <div class="what">Based in Steamboat Springs</div>
+      <div class="sub">Field days — see options below.</div>
+    </div>
+    <div class="anchor">
+      <div class="date">Oct 2</div>
+      <div class="what">Travel day → Denver hotel</div>
+      <div class="sub">Same ~3–3.5 hr drive back, reverse route. Check into the Denver hotel for the rest of the trip.</div>
+    </div>
+    <div class="anchor">
+      <div class="date">Oct 3</div>
+      <div class="what">Wedding — Longmont</div>
+      <div class="sub">Day trip from the Denver hotel — Longmont is only ~35–45 min away, not a full relocation.</div>
+    </div>
+    <div class="anchor">
+      <div class="date">Oct 4</div>
+      <div class="what">Departure from DEN</div>
+      <div class="sub">Hotel's already in Denver — short hop to the airport, but still build in a traffic buffer.</div>
+    </div>
+  </div>
+
+  <div class="weathersection">
+    <div class="weatherhead">
+      <div>
+        <span class="weathereyebrow">Weather Outlook</span>
+        <span class="weathernote" id="weatherNote">Historical averages, not a forecast — real forecasts don't reach this far out.</span>
+      </div>
+      <button class="refreshbtn" id="refreshWeatherBtn"><span class="refresh-arrow">⟳</span> Refresh weather</button>
+    </div>
+    <div class="weathercards">
+      <div class="weathercard" id="wc-steamboat">
+        <div class="wc-top">
+          <h4>Steamboat Springs</h4>
+          <span class="wc-badge live" id="wc-badge-steamboat">Live forecast</span>
+        </div>
+        <span class="wc-dates">Sep 25 – Oct 1</span>
+        <div class="wc-body" id="wc-body-steamboat">
+          <div class="wc-daylist">
+            <div class="wc-day"><div class="d-date">Sep 25</div><div class="d-icon">🌤️</div><div class="d-hi">65°</div><div class="d-lo">42°</div><div class="d-precip">Partly cloudy</div></div>
+            <div class="wc-day"><div class="d-date">Sep 26</div><div class="d-icon">☀️</div><div class="d-hi">73°</div><div class="d-lo">43°</div><div class="d-precip">Mostly sunny</div></div>
+            <div class="wc-day"><div class="d-date">Sep 27</div><div class="d-icon">🌤️</div><div class="d-hi">74°</div><div class="d-lo">45°</div><div class="d-precip">Partly cloudy</div></div>
+            <div class="wc-day"><div class="d-date">Sep 28</div><div class="d-icon">⛈️</div><div class="d-hi">65°</div><div class="d-lo">39°</div><div class="d-precip">0.14in · storms</div></div>
+            <div class="wc-day"><div class="d-date">Sep 29</div><div class="d-icon">🌧️</div><div class="d-hi">66°</div><div class="d-lo">40°</div><div class="d-precip">0.04in · showers</div></div>
+            <div class="wc-day"><div class="d-date">Sep 30</div><div class="d-icon">☀️</div><div class="d-hi">70°</div><div class="d-lo">39°</div><div class="d-precip">Sunny</div></div>
+            <div class="wc-day"><div class="d-date">Oct 1</div><div class="d-icon">☀️</div><div class="d-hi">73°</div><div class="d-lo">41°</div><div class="d-precip">Sunny</div></div>
+          </div>
+          <p class="wc-desc">Pulled Sep 22 from Weather Underground's 10-day forecast — genuinely live, not historical average. Warmer than the seasonal norm for most of the week, with one wetter stretch Sep 28–29 (scattered storms/showers) before clearing back up. Mornings still cold at elevation even on the warm days.</p>
+          <div class="wc-tags"><span class="tag">Warmer than normal</span><span class="tag">Wet Sep 28–29</span><span class="tag">Cold mornings</span></div>
+        </div>
+      </div>
+      <div class="weathercard" id="wc-denver">
+        <div class="wc-top">
+          <h4>Denver / Longmont</h4>
+          <span class="wc-badge" id="wc-badge-denver">Historical avg</span>
+        </div>
+        <span class="wc-dates">Oct 2 – Oct 4</span>
+        <div class="wc-body" id="wc-body-denver">
+          <div class="wc-temps">
+            <div class="wc-temp"><span class="wc-val">70°/43°</span><span class="wc-lbl">early Oct avg hi/lo (°F)</span></div>
+          </div>
+          <p class="wc-desc">Noticeably milder than Steamboat — Denver sits about 1,500 ft lower. Afternoons are usually comfortable in a light layer; evenings (including the wedding) will want a jacket. Early snow isn't unheard of but less likely than in the mountains.</p>
+          <div class="wc-tags"><span class="tag">Milder than mtns</span><span class="tag">Evening jacket</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="wc-lastchecked" id="wc-lastchecked"></p>
+  </div>
+
+
+  <div class="revealrow">
+    <button class="revealbtn" data-type="hike" id="revealHike">
+      <span class="rb-icon">🥾</span><span>Hikes</span>
+    </button>
+    <button class="revealbtn" data-type="bike" id="revealBike">
+      <span class="rb-icon">🚲</span><span>Bike Rides</span>
+    </button>
+    <button class="revealbtn" data-type="town" id="revealTown">
+      <span class="rb-icon">🏘️</span><span>Town &amp; Rest</span>
+    </button>
+    <button class="revealbtn shopbtn" id="revealShopping">
+      <span class="rb-icon">🛍️</span><span>Shopping</span>
+    </button>
+    <button class="revealbtn shopbtn" id="revealEvents">
+      <span class="rb-icon">🎪</span><span>Events</span>
+    </button>
+    <button class="revealbtn shopbtn" id="revealTouristy">
+      <span class="rb-icon">🎡</span><span>Touristy</span>
+    </button>
+    <button class="revealbtn shopbtn" id="revealEntertainment">
+      <span class="rb-icon">🎭</span><span>Entertainment</span>
+    </button>
+    <button class="revealbtn shopbtn" id="revealFood">
+      <span class="rb-icon">🍽️</span><span>Food</span>
+    </button>
+    <button class="revealbtn shopbtn" id="revealSafety">
+      <span class="rb-icon">🛡️</span><span>Safety &amp; Prep</span>
+    </button>
+    <button class="revealbtn shopbtn" id="revealRental">
+      <span class="rb-icon">🚗</span><span>Rental Car</span>
+    </button>
+  </div>
+
+  <div id="optionsArea">
+    <div class="filterbar">
+      <div class="filtergroup">
+        <span class="label">Type</span>
+        <button class="chip active" data-filter="type" data-value="all">All</button>
+        <button class="chip" data-filter="type" data-value="hike">Hike</button>
+        <button class="chip" data-filter="type" data-value="bike">Bike</button>
+        <button class="chip" data-filter="type" data-value="town">Town / Rest</button>
+      </div>
+      <label class="toggle">
+        <input type="checkbox" id="kidFilter">
+        <span class="switch"></span>
+        Kid-trailer-friendly only
+      </label>
+    </div>
+
+    <div class="filterbar">
+      <div class="filtergroup">
+        <span class="label">Area</span>
+        <button class="chip active" data-filter="area" data-value="all">All</button>
+        <button class="chip" data-filter="area" data-value="In Town">In Town</button>
+        <button class="chip" data-filter="area" data-value="Zirkel Wilderness">Zirkel Wilderness</button>
+        <button class="chip" data-filter="area" data-value="Flat Tops">Flat Tops</button>
+        <button class="chip" data-filter="area" data-value="North Routt">North Routt</button>
+        <button class="chip" data-filter="area" data-value="Buffalo Pass">Buffalo Pass</button>
+        <button class="chip" data-filter="area" data-value="Grand Lake / RMNP">Grand Lake / RMNP</button>
+        <button class="chip" data-filter="area" data-value="Estes Park / RMNP East">Estes Park / RMNP East</button>
+        <button class="chip" data-filter="area" data-value="Arapaho &amp; Roosevelt NF">Arapaho &amp; Roosevelt NF</button>
+        <button class="chip" data-filter="area" data-value="Denver / Boulder">Denver / Boulder</button>
+      </div>
+    </div>
+
+    <p class="resultcount" id="resultCount"></p>
+    <div class="cards" id="cardsGrid"></div>
+  </div>
+
+  <div id="shoppingArea">
+    <div class="shoptabs">
+      <button class="shoptab active" data-city="steamboat">Near Steamboat</button>
+      <button class="shoptab" data-city="denver">In Denver</button>
+    </div>
+    <p class="shopnote" id="shopNote"></p>
+    <div class="cards" id="shopGrid"></div>
+  </div>
+
+  <div id="eventsArea">
+    <div class="shoptabs">
+      <button class="shoptab active" data-city="steamboat">Near Steamboat</button>
+      <button class="shoptab" data-city="denver">In Denver</button>
+    </div>
+    <p class="shopnote" id="eventNote"></p>
+    <div class="cards" id="eventGrid"></div>
+    <p class="eventfyi" id="eventFyi"></p>
+  </div>
+
+  <div id="touristyArea">
+    <div class="shoptabs">
+      <button class="shoptab active" data-city="steamboat">Near Steamboat</button>
+      <button class="shoptab" data-city="denver">In Denver</button>
+    </div>
+    <p class="shopnote" id="touristyNote"></p>
+    <div class="cards" id="touristyGrid"></div>
+  </div>
+
+  <div id="entertainmentArea">
+    <div class="shoptabs">
+      <button class="shoptab active" data-city="steamboat">Near Steamboat</button>
+      <button class="shoptab" data-city="denver">In Denver</button>
+    </div>
+    <p class="shopnote" id="entertainmentNote"></p>
+    <div class="cards" id="entertainmentGrid"></div>
+    <p class="eventfyi" id="entertainmentFyi"></p>
+  </div>
+
+  <div id="foodArea">
+    <p class="shopnote">Matched to the areas already on this board — each one paired with the hikes, rides, and stops you'd actually be doing that day.</p>
+    <div id="foodGrid"></div>
+  </div>
+
+  <div id="safetyArea">
+    <div class="infoblock">
+      <h3 class="infotitle">🏔️ Altitude</h3>
+      <p class="desc">Steamboat sits at 6,732 ft, and several hikes on this board climb well past that — Devil's Causeway and the Zirkel hikes top out near 10,500–12,000 ft, Chasm Lake and Isabelle Glacier go even higher. That's a real jump if you're coming from closer to sea level, and it hits kids differently than adults — often as crankiness, poor sleep, headache, or loss of appetite rather than the "can't breathe" feeling adults notice first.</p>
+      <ul class="infolist">
+        <li><b>Ease in:</b> keep Sept 25–26 light — the Core Trail, Botanic Park, or a short Fish Creek Falls walk, not Devil's Causeway or Mount Zirkel. Altitude symptoms usually show up in the first 24–48 hours.</li>
+        <li><b>Hydrate before you climb:</b> more than feels necessary, starting the day before a big hike. Alcohol and caffeine make it worse.</li>
+        <li><b>Watch the kiddo, not just yourselves:</b> a 4-year-old can't always describe "I feel off" — watch for unusual fussiness, refusing food, or bad sleep that first night or two.</li>
+        <li><b>When to actually worry:</b> persistent vomiting, confusion, trouble breathing at rest, or symptoms that get worse instead of better — that's a "descend and get checked" situation, not a "push through it" one.</li>
+      </ul>
+    </div>
+
+    <div class="infoblock">
+      <h3 class="infotitle">🐻 Wildlife Safety</h3>
+      <p class="desc">Several picks on this board are genuine bear and moose country — Buffalo Pass, the Zirkel Wilderness trailheads, and the Grand Lake area especially. I've mentioned "good moose odds" a couple times without ever addressing what that means practically — worth fixing.</p>
+      <ul class="infolist">
+        <li><b>Bears:</b> make noise on trail (talking is enough, bear bells are optional), never leave food or trash unattended at a trailhead or campsite, and store snacks in a sealed bag inside a pack, not a stroller pocket.</li>
+        <li><b>Moose — genuinely more dangerous at close range than bears:</b> they don't fear humans and will charge if they feel crowded, especially a cow with a calf. Give any moose at least 50 yards, more if a calf is present. If one is on the trail ahead, turn around rather than trying to pass.</li>
+        <li><b>If you encounter either:</b> stay calm, don't run, back away slowly while keeping the animal in view. For a bear, make yourself look bigger and back away; running can trigger a chase response.</li>
+        <li><b>With a 4-year-old specifically:</b> keep them within arm's reach on any trail in bear/moose country rather than letting them range ahead, and do a quick "if we see a big animal, we stay quiet and walk backward with Mom/Dad" talk before you set out.</li>
+      </ul>
+    </div>
+
+    <div class="infoblock">
+      <h3 class="infotitle">📵 Cell &amp; GPS Dead Zones</h3>
+      <p class="desc">The Directions buttons throughout this board are only useful while you have signal — and several of the drives and trailheads genuinely don't.</p>
+      <ul class="infolist">
+        <li><b>Known weak/no-signal stretches:</b> Seedhouse Road out to the Slavonia trailhead (Gilpin Lake, Gold Creek Lake), Buffalo Pass Road, most of County Road 129 north of Clark, and long stretches of CO-131 between Steamboat and Yampa.</li>
+        <li><b>Before you leave town each day:</b> download that day's route as an offline Google Maps area (Google Maps app → Offline Maps), and download the specific AllTrails map for any hike linked on this board — both work with zero signal once saved.</li>
+        <li><b>Basic backcountry habit:</b> tell someone (or just each other, out loud) which trailhead you're headed to and roughly when you expect to be back, especially for the longer hikes like Devil's Causeway or Mount Zirkel-area trails.</li>
+      </ul>
+    </div>
+
+    <div class="infoblock">
+      <h3 class="infotitle">🎒 Packing List</h3>
+      <p class="desc">The real math: 3 free bags per person × 3 of you = 9 total with United, minus 2 bike cases = <b>7 free bags</b> to split across the three of you for hiking gear, hot springs stuff, wedding attire, and layers for a 40°F+ swing. That's genuinely comfortable, not a tight squeeze — worth organizing by category rather than worrying about volume.</p>
+      <div class="callout">
+        <p class="desc"><b>Suggested split:</b> with 7 bags for 3 people, a natural approach is one bag per person for everyday/hiking clothes, plus 1–2 shared bags for the categories below — one for hot springs gear (swimsuits, water shoes, towels), one for wedding attire (or just a garment bag, which typically doesn't count against your allowance anyway). No need to cram everything into one bag or wear your boots through security unless you'd rather travel light regardless.</p>
+      </div>
+      <div class="packgrid">
+        <div class="packcol">
+          <h4>Hiking &amp; Outdoor</h4>
+          <ul><li>Layers for 30–70°F swings (fleece/puffy + rain shell)</li><li>Broken-in hiking shoes for everyone, incl. the 4-year-old</li><li>Sun hat, sunscreen, sunglasses (UV is stronger at altitude)</li><li>Kid carrier or day pack for the longer hikes</li><li>Refillable water bottles, water treatment/filter for backcountry</li><li>Bear spray if doing the remoter Zirkel trailheads (optional but common practice)</li></ul>
+        </div>
+        <div class="packcol">
+          <h4>Water &amp; Hot Springs</h4>
+          <ul><li>Swimsuits for Old Town Hot Springs / Strawberry Park</li><li>Water shoes for tubing on the Yampa</li><li>Quick-dry towel — packs far smaller than a regular one</li></ul>
+        </div>
+        <div class="packcol">
+          <h4>Wedding (Oct 3)</h4>
+          <ul><li>Garment bag or its own dedicated bag to keep formalwear wrinkle-free</li><li>Dress shoes — separate from hiking boots</li><li>A kid-appropriate outfit that also tolerates a car seat</li></ul>
+        </div>
+        <div class="packcol">
+          <h4>Kid-Specific</h4>
+          <ul><li>Comfort item(s) for the midnight airport arrival</li><li>Snacks for trail days and the long drives</li><li>Any regular medications, plus basic kids' pain/fever reducer</li><li>A few backup outfits — mud, hot springs, and spilled snacks add up</li></ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="infoblock">
+      <h3 class="infotitle">🏥 Nearest Hospital &amp; Urgent Care</h3>
+      <p class="desc">One for Steamboat, two for Denver — the Denver pick includes a dedicated pediatric ER, worth knowing given the 4-year-old.</p>
+      <div class="cards" id="medGrid"></div>
+    </div>
+  </div>
+
+  <div id="rentalArea">
+    <div class="placeholdercard">
+      <div class="placeholdertag">Placeholder — not yet filled in</div>
+      <h3>Rental Car Check-In</h3>
+      <p class="desc">Send over your confirmation number once it's booked and I'll fill in the rest — including a Directions button straight to the pickup counter.</p>
+      <div class="phgrid">
+        <div class="phfield"><span class="phlabel">Company</span><span class="phvalue">Alamo Rent A Car</span></div>
+        <div class="phfield"><span class="phlabel">Confirmation #</span><span class="phvalue">—</span></div>
+        <div class="phfield"><span class="phlabel">Pickup location</span><span class="phvalue">DEN Rental Car Center (likely)</span></div>
+        <div class="phfield"><span class="phlabel">Pickup date/time</span><span class="phvalue">— (after your airport rest, Sept 25)</span></div>
+        <div class="phfield"><span class="phlabel">Return location</span><span class="phvalue">—</span></div>
+        <div class="phfield"><span class="phlabel">Return date/time</span><span class="phvalue">— (Oct 4, before your flight)</span></div>
+        <div class="phfield"><span class="phlabel">Car seat / add-ons</span><span class="phvalue">—</span></div>
+        <div class="phfield"><span class="phlabel">Insurance / coverage</span><span class="phvalue">—</span></div>
+      </div>
+      <a class="anchorlink" href="https://www.alamo.com/en_US/car-rental-app.html" target="_blank" rel="noopener" style="display:inline-block; margin-bottom:12px;">Get the Alamo App ↗</a>
+      <p class="phnote">The app handles Accelerated Check-In (add your license and DOB ahead of time so the counter is fast) and shows your pickup counter location directly — worth setting up before Sept 25. Also worth deciding ahead of time: with the Zirkel/North Routt trailheads needing high-clearance vehicles (noted below), it may be worth asking about AWD/high-clearance options when you book.</p>
+    </div>
+  </div>
+
+  <footer class="note">
+    NOTE — Zirkel and North Routt trailheads (Slavonia, Gold Creek, Hahn's Peak) often need a high-clearance vehicle,
+    worse once fall rains/early snow hit. Late Sept/early Oct is prime aspen season but nights get cold and afternoon
+    storms are still possible in the high country — check trailhead road status before driving out.
+    <br><br>
+    RMNP NOTE — Grand Lake/Coyote Valley/Adams Falls are on RMNP's west side, ~2 hrs (94 mi) from Steamboat —
+    comfortably within a 3-hour radius, and a genuinely easy day trip. Bear Lake Loop, Sprague Lake, and Lily Lake
+    are on RMNP's <i>east</i> side near Estes Park — honestly ~4.5 hrs (178 mi) from Steamboat, tagged
+    "⚠ Long drive" so you can weigh it that week rather than commit now. Long Lake &amp; Lake Isabelle (Arapaho &amp;
+    Roosevelt National Forest, Brainard Lake) is a similar ~4 hrs and carries the same tag. All RMNP and Brainard
+    Lake trailheads need their own separate timed-entry reservations through Recreation.gov (RMNP's system runs
+    through Oct 13–19, 2026) — book ahead, they sell out. Longs Peak's actual summit trail is a serious technical
+    14er regardless of distance — Lily Lake gets you the classic view of it without the climb.
+  </footer>
+
+</div>
+
+<script>
+const items = [
+  {type:"hike", area:"In Town", title:"Fish Creek Falls (Lower)", diff:"easy", art:"waterfall", dist:"5 mi · ~10 min",
+    stats:["0.5 mi RT","~5 min from town"],
+    desc:"Short paved walk to a 280-ft waterfall right at the edge of town.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/fish-creek-falls-trail"},
+  {type:"hike", area:"In Town", title:"Yampa River Botanic Park Stroll", diff:"easy", art:"garden", dist:"In town",
+    stats:["~1 mi of paths","Flat, shaded"],
+    desc:"Six-acre garden sanctuary right off the Core Trail — easy, unhurried walk.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/yampa-river-botanic-garden-loop"},
+  {type:"hike", area:"Zirkel Wilderness", title:"Gilpin Lake / Zirkel Circle", diff:"strenuous", art:"lake", dist:"28 mi · ~45 min (Slavonia TH)",
+    stats:["~9 mi RT to lake","Big elevation gain"],
+    desc:"Forest and wildflower meadows climbing to an alpine lake below Big Agnes Mountain. Full Zirkel Circle loop with Gold Creek Lake is a multi-day option.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/mount-zirkel-loop-trail"},
+  {type:"hike", area:"Zirkel Wilderness", title:"Mad Creek Trail", diff:"moderate", art:"barn", dist:"6 mi · ~15 min",
+    stats:["~4 mi RT to barn","Gentle grade"],
+    desc:"Follows the creek to a 1906 homesteader barn, with a loop option via Red Dirt Trail.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/mad-creek-trail"},
+  {type:"hike", area:"Zirkel Wilderness", title:"Gold Creek Lake Trail", diff:"moderate", art:"lake", dist:"28 mi · ~45 min (Slavonia TH)",
+    stats:["~8 mi RT","Steady forest climb"],
+    desc:"Follows Gold Creek up to a lake at the base of the Zirkel Range — one of the higher-rated trails in the wilderness.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/gold-creek-lake-via-fs-1150"},
+  {type:"hike", area:"Flat Tops", title:"Devil's Causeway", diff:"strenuous", art:"ridge", dist:"47 mi · ~1 hr 15 min",
+    stats:["10–11 mi RT (loop option)","Exposed ridge, ~12,000 ft"],
+    desc:"The signature Flat Tops hike — a narrow volcanic ridge with sheer drop-offs on both sides. Real exposure.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/devils-causeway"},
+  {type:"hike", area:"Flat Tops", title:"Rabbit Ears Peak", diff:"moderate", art:"spires", dist:"25 mi · ~30 min",
+    stats:["~4–5 mi RT","Rocky final stretch"],
+    desc:"Climbs to the base of the twin volcanic spires with long views across the Yampa Valley.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/rabbit-ears-peak-trail--3"},
+  {type:"hike", area:"North Routt", title:"Hahn's Peak", diff:"moderate", art:"tower", dist:"28 mi · ~45 min",
+    stats:["3.6 mi RT","Old fire lookout summit"],
+    desc:"Sweeping views over Routt National Forest, Zirkel Wilderness, and Steamboat Lake. 4x4/high-clearance access road.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/hahns-peak-trail"},
+  {type:"hike", area:"Buffalo Pass", title:"Spring Creek Trail", diff:"moderate", art:"switchback", dist:"In town (trailhead)",
+    stats:["5.2 mi one-way to Dry Lake","Steady climb"],
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/spring-creek",
+    desc:"Starts as an easy multi-use path near town, narrows to singletrack climbing to Dry Lake Campground."},
+
+  {type:"bike", area:"In Town", title:"Yampa River Core Trail", diff:"easy", kid:true, dist:"In town",
+    stats:["Up to 7.5 mi one-way","Paved, flat"],
+    desc:"Paved riverside path connecting downtown to Bear River Park. The trail locals point to first for a trailer.",
+    tags:["Paved","Stroller-OK"],
+    infoUrl:"https://steamboatsprings.net/307/Trails",
+    mapAddress:"Yampa River Core Trail, Steamboat Springs, CO 80487"},
+  {type:"bike", area:"In Town", title:"Botanic Park Loop (Core Trail spur)", diff:"easy", kid:true, dist:"In town",
+    stats:["~2 mi RT","Paved"],
+    desc:"Shorter slice of the Core Trail out to the Yampa River Botanic Park and back.",
+    tags:["Paved","Short"],
+    infoUrl:"https://steamboatsprings.net/307/Trails",
+    mapAddress:"Yampa River Botanic Park, Steamboat Springs, CO 80487"},
+  {type:"bike", area:"Zirkel Wilderness", title:"Stagecoach State Park — Lakeside Trail", diff:"easy", kid:true, dist:"18 mi · ~25 min",
+    stats:["2 mi","Dirt, well-maintained, flat"],
+    desc:"Easy, scenic dirt track skirting the lake at Stagecoach — about 25 min south of Steamboat.",
+    tags:["Dirt path","Flat"],
+    infoUrl:"https://cpw.state.co.us/state-parks/stagecoach-state-park",
+    mapAddress:"Stagecoach State Park, Oak Creek, CO 80467"},
+  {type:"bike", area:"Flat Tops", title:"Elk River Road", diff:"easy", kid:true, dist:"5 mi · ~10 min (start)",
+    stats:["Choose your distance","Wide paved shoulder"],
+    desc:"Family-friendly paved stretch following the Yampa River from Walton Creek Road to the James Brown Bridge.",
+    tags:["Paved","Choose distance"],
+    infoUrl:"https://www.steamboatchamber.com/activities/biking/around-town/",
+    mapAddress:"Elk River Road, Steamboat Springs, CO 80487"},
+  {type:"bike", area:"North Routt", title:"Steamboat Lake — Willow Creek Trail", diff:"easy", kid:true, dist:"27 mi · ~45 min",
+    stats:["3.8 mi one-way","Dirt, scenic, gentle"],
+    desc:"Easy scenic ride from the Dutch Hill Marina to Sage Flats — flat enough for a trailer with lake views most of the way.",
+    tags:["Dirt path","Lake views"],
+    infoUrl:"https://cpw.state.co.us/state-parks/steamboat-lake-state-park",
+    mapAddress:"Steamboat Lake State Park, Clark, CO 80428"},
+  {type:"bike", area:"Buffalo Pass", title:"Long Lake Loop", diff:"moderate", kid:false, dist:"8 mi · ~20 min (rough road)",
+    stats:["~14 mi","Singletrack + dirt road"],
+    desc:"Classic beginner-to-intermediate mountain bike loop with big Buffalo Pass views. Real singletrack — not trailer terrain, better for a kid pedaling their own bike.",
+    tags:["Singletrack"],
+    mapAddress:"Dry Lake Campground, Steamboat Springs, CO 80487"},
+  {type:"bike", area:"Denver / Boulder", title:"Cherry Creek Trail", diff:"easy", kid:true, dist:"~170 mi · Denver leg only",
+    stats:["~40 mi total, ride any stretch","Paved, flat"],
+    desc:"Paved multi-use path running through Denver from Confluence Park down to Cherry Creek Reservoir — flat, well-signed, and an easy trailer ride right from the hotel area.",
+    tags:["Paved","Flat"],
+    infoUrl:"https://www.alltrails.com/trail/us/colorado/cherry-creek-trail",
+    mapAddress:"Confluence Park, Denver, CO 80202"},
+  {type:"bike", area:"Denver / Boulder", title:"Boulder Creek Path", diff:"easy", kid:true, dist:"~160 mi · Denver leg only",
+    stats:["Miles of paved path","~35–40 min from Denver"],
+    desc:"Paved multi-use path through Boulder — flat, well-maintained, and easy with a trailer if you want a change of scenery before or after the wedding.",
+    tags:["Paved","Flat"],
+    infoUrl:"https://bouldercolorado.gov/locations/boulder-creek-path",
+    mapAddress:"Boulder Creek Path, Boulder, CO 80302"},
+
+  {type:"town", area:"Buffalo Pass", title:"Strawberry Park Hot Springs", diff:"easy", dist:"7 mi · ~20 min (unpaved)",
+    stats:["Evening soak","Reservations required"],
+    desc:"Natural hot springs terraces just outside town — check current reservation and hours policy before heading up."},
+  {type:"town", area:"In Town", title:"Yampa River Tubing", diff:"easy", dist:"In town",
+    stats:["~1–2 hrs float","Rentals downtown"],
+    desc:"Low-key float down the Yampa through town — rent tubes on Yampa Street and put in near the library or Rotary Park."},
+  {type:"town", area:"Zirkel Wilderness", title:"Oak Creek", diff:"easy", dist:"18 mi · ~28 min",
+    stats:["Walkable Main St","~1,000 people"],
+    desc:"Old coal-mining town turned quiet ranching community — a genuinely walkable little Main Street, a couple of restaurants, and the small Tracks and Trails history museum. Right next to Stagecoach State Park, so pairs well with that bike day."},
+  {type:"town", area:"North Routt", title:"Clark", diff:"easy", dist:"16 mi · ~29 min",
+    stats:["The Clark Store","Barely a town"],
+    desc:"More crossroads than town, but full of character — the Clark Store is the classic general-store stop, with a patio for ice cream overlooking the valley. Right on the way to Hahn's Peak, Gold Creek Lake, and Steamboat Lake."},
+  {type:"town", area:"Flat Tops", title:"Yampa", diff:"easy", dist:"22 mi · ~39 min",
+    stats:["Devil's Causeway gateway","A couple of blocks"],
+    desc:"Tiny gateway town right by the Stillwater trailhead for Devil's Causeway — not much beyond a couple blocks, but worth a quick stop for lunch before or after that hike."},
+
+  {type:"hike", area:"Grand Lake / RMNP", title:"Coyote Valley Trail", diff:"easy", art:"lake", dist:"94 mi · ~2 hrs",
+    stats:["1.9 mi RT","Paved/hard-packed, flat"],
+    desc:"Wheelchair- and stroller-accessible trail along the headwaters of the Colorado River in the Kawuneeche Valley, on RMNP's quieter west side. Genuinely good odds of spotting elk or moose. Requires a timed-entry reservation (9am-2pm) and a park pass — book ahead on recreation.gov.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/coyote-valley-trail--4"},
+  {type:"hike", area:"Grand Lake / RMNP", title:"Adams Falls", diff:"easy", art:"waterfall", dist:"95 mi · ~2 hrs",
+    stats:["~1 mi RT to falls","Short, well-maintained"],
+    desc:"One of the most popular short family hikes in RMNP — a well-maintained trail from the East Inlet Trailhead, less than a mile from downtown Grand Lake, to a rocky waterfall. Same timed-entry reservation rules apply.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/adams-falls-trail"},
+  {type:"town", area:"Grand Lake / RMNP", title:"Grand Lake", diff:"easy", dist:"94 mi · ~2 hrs",
+    stats:["Lakeside boardwalk","Colorado's largest natural lake"],
+    desc:"Charming mountain town right on the lake, with a walkable wooden boardwalk of shops and restaurants — a natural lunch stop before or after Coyote Valley or Adams Falls. This is genuinely a full-day-trip destination, not a quick detour."},
+
+  {type:"hike", area:"Estes Park / RMNP East", title:"Bear Lake Loop", diff:"easy", art:"lake", dist:"178 mi · ~4.5 hrs", warn:"Long drive — decide that week",
+    stats:["0.7 mi RT","Iconic RMNP views"],
+    desc:"The classic easy RMNP lake loop — front-row views of rock-walled peaks right in the heart of the park. Needs the Timed Entry+Bear Lake Road reservation (5am-6pm window) specifically, which is more limited than general park entry.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/bear-lake-nature-trail--3"},
+  {type:"hike", area:"Estes Park / RMNP East", title:"Sprague Lake Loop", diff:"easy", art:"lake", dist:"178 mi · ~4.5 hrs", warn:"Long drive — decide that week",
+    stats:["0.8 mi RT","Wheelchair/stroller accessible"],
+    desc:"A flat, boardwalked loop around a lake with Continental Divide views — good odds of moose in the shallows. Same Bear Lake Road corridor reservation as Bear Lake Loop applies.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/sprague-lake-trail"},
+  {type:"hike", area:"Estes Park / RMNP East", title:"Lily Lake", diff:"easy", art:"lake", dist:"178 mi · ~4.5 hrs", warn:"Long drive — decide that week",
+    stats:["0.8 mi RT","No timed-entry required"],
+    desc:"Flat, gravel-and-boardwalk loop right by the Longs Peak Trailhead/Ranger Station, with a genuinely great view of Longs Peak itself without the technical climb. Bonus: this one sits outside the RMNP reservation zone, so no timed-entry booking needed.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/lily-lake-trail-641"},
+  {type:"hike", area:"Estes Park / RMNP East", title:"Emerald Lake Trail", diff:"moderate", art:"lake", dist:"178 mi · ~4.5 hrs", warn:"Long drive — decide that week",
+    stats:["3.6 mi RT","Nymph, Dream & Emerald Lakes"],
+    desc:"The classic Bear Lake corridor hike — a steady, steepening climb past three alpine lakes to Emerald Lake beneath Hallett Peak. Genuinely popular, so early arrival matters. Same Bear Lake Road reservation as Bear Lake Loop.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/emerald-lake-trail"},
+  {type:"hike", area:"Estes Park / RMNP East", title:"Chasm Lake", diff:"strenuous", art:"lake", dist:"178 mi · ~4.5 hrs", warn:"Long drive — decide that week",
+    stats:["8.4 mi RT","2,700 ft gain, some scrambling"],
+    desc:"A real full-day hike from the Longs Peak Trailhead, climbing steadily to an alpine lake beneath Longs Peak's Diamond face — the classic way to experience Longs Peak up close without the technical summit climb. Some scrambling near the end. Uses the regular Timed Entry permit, not the Bear Lake Road one.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/chasm-lake"},
+  {type:"hike", area:"Arapaho & Roosevelt NF", title:"Long Lake & Lake Isabelle", diff:"moderate", art:"lake", dist:"~180 mi · ~4 hrs", warn:"Long drive — decide that week",
+    stats:["4.9 mi RT loop","Alpine lakes, Indian Peaks views"],
+    desc:"Brainard Lake Recreation Area, Indian Peaks Wilderness — genuinely stunning alpine scenery, framed by three 13,000-ft peaks. Long Lake alone is an easy quarter-mile from the trailhead if the full loop to Lake Isabelle is too much. Needs its own separate Recreation.gov timed-entry reservation, and the access road typically closes mid-October.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/lake-isabelle-and-long-lake-jean-lunning-loop"},
+  {type:"hike", area:"Arapaho & Roosevelt NF", title:"Isabelle Glacier via Pawnee Pass", diff:"strenuous", art:"lake", dist:"~180 mi · ~4 hrs", warn:"Long drive — decide that week",
+    stats:["8.9 mi RT","1,650 ft gain"],
+    desc:"The full-send version of the Brainard Lake hikes — continues past Lake Isabelle up to Isabelle Glacier itself, with big alpine payoff the whole way. A serious day out, best for whoever in the group wants the bigger mileage while the rest turn around at Lake Isabelle.",
+    photosUrl:"https://www.alltrails.com/trail/us/colorado/isabelle-glacier-trail-full-loop"}
+];
+
+const grid = document.getElementById("cardsGrid");
+const resultCount = document.getElementById("resultCount");
+let activeType = "all";
+let activeArea = "all";
+let kidOnly = false;
+
+function artFor(kind){
+  const bg = `<defs><linearGradient id="sky-${kind}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2c4235"/><stop offset="100%" stop-color="#17251d"/>
+    </linearGradient></defs>`;
+  const far  = `<path d="M0,95 L60,60 L100,85 L150,50 L200,88 L260,58 L320,92 L320,110 L0,110 Z" fill="#233a2d"/>`;
+  const near = `<path d="M0,80 L40,40 L70,65 L110,25 L150,60 L190,35 L230,70 L270,45 L320,75 L320,110 L0,110 Z" fill="#3a5445" opacity="0.85"/>`;
+
+  let fg = "";
+  switch(kind){
+    case "waterfall":
+      fg = `<rect x="146" y="8" width="7" height="72" fill="#eee7d3" opacity="0.92"/>
+            <rect x="157" y="22" width="4" height="58" fill="#eee7d3" opacity="0.55"/>
+            <rect x="137" y="18" width="4" height="52" fill="#eee7d3" opacity="0.55"/>
+            <ellipse cx="150" cy="88" rx="30" ry="8" fill="#7a93a8" opacity="0.55"/>`;
+      break;
+    case "lake":
+      fg = `<ellipse cx="160" cy="92" rx="150" ry="16" fill="#7a93a8" opacity="0.55"/>
+            <path d="M30,90 Q95,84 160,90 T290,90" stroke="#eee7d3" stroke-width="1.5" fill="none" opacity="0.5"/>
+            <path d="M30,97 Q95,92 160,97 T290,97" stroke="#eee7d3" stroke-width="1" fill="none" opacity="0.35"/>`;
+      break;
+    case "ridge":
+      fg = `<path d="M55,90 L108,38 L138,54 L168,28 L198,54 L228,38 L272,90" stroke="#c1912b" stroke-width="4" fill="none" stroke-linejoin="round" stroke-linecap="round"/>
+            <circle cx="168" cy="28" r="3.5" fill="#eee7d3"/>`;
+      break;
+    case "spires":
+      fg = `<rect x="128" y="18" width="20" height="72" rx="10" fill="#a84c2b"/>
+            <rect x="167" y="32" width="17" height="58" rx="8.5" fill="#8f3f22"/>`;
+      break;
+    case "tower":
+      fg = `<rect x="137" y="34" width="26" height="17" fill="#c1912b"/>
+            <line x1="139" y1="90" x2="145" y2="51" stroke="#eee7d3" stroke-width="2"/>
+            <line x1="161" y1="90" x2="155" y2="51" stroke="#eee7d3" stroke-width="2"/>
+            <line x1="144" y1="72" x2="158" y2="64" stroke="#eee7d3" stroke-width="1.5"/>
+            <line x1="144" y1="64" x2="158" y2="72" stroke="#eee7d3" stroke-width="1.5"/>`;
+      break;
+    case "barn":
+      fg = `<polygon points="128,90 128,58 154,40 180,58 180,90" fill="#a84c2b"/>
+            <rect x="147" y="68" width="14" height="22" fill="#5c3a28"/>
+            <polygon points="118,90 118,68 133,68 133,90" fill="#3a5445" opacity="0.7"/>`;
+      break;
+    case "switchback":
+      fg = `<path d="M55,96 L108,72 L86,56 L146,34 L124,18" stroke="#eee7d3" stroke-width="3" fill="none" stroke-dasharray="6 5" stroke-linecap="round" opacity="0.9"/>`;
+      break;
+    case "garden":
+      fg = [0,1,2,3,4].map(i => `<circle cx="${86+i*36}" cy="${74+((i%2)*11)}" r="7" fill="${i%2? '#c1912b':'#a84c2b'}"/>`).join("");
+      break;
+  }
+  return `<svg viewBox="0 0 320 110" preserveAspectRatio="xMidYMid slice">${bg}<rect width="320" height="110" fill="url(#sky-${kind})"/>${far}${near}${fg}</svg>`;
+}
+
+function render(){
+  const filtered = items.filter(it => {
+    if (activeType !== "all" && it.type !== activeType) return false;
+    if (activeArea !== "all" && it.area !== activeArea) return false;
+    if (kidOnly && !(it.type === "bike" && it.kid)) return false;
+    return true;
+  });
+  resultCount.textContent = `${filtered.length} option${filtered.length===1?"":"s"}`;
+  grid.innerHTML = filtered.map(it => {
+    const kidTag = it.kid ? `<span class="tag kid">Kid-trailer OK</span>` : "";
+    const warnTag = it.warn ? `<span class="tag warntag">⚠ ${it.warn}</span>` : "";
+    const otherTags = (it.tags||[]).map(t => `<span class="tag">${t}</span>`).join("");
+    const artHtml = it.art ? `<div class="card-art">${artFor(it.art)}</div>` : "";
+    const photoLink = it.photosUrl ? `<a class="photolink" href="${it.photosUrl}" target="_blank" rel="noopener">View trail photos ↗</a>` : "";
+    const bikeLinks = it.mapAddress ? `
+        <div class="shopbtnrow" style="margin-top:11px;">
+          ${it.infoUrl ? `<a class="websitebtn" href="${it.infoUrl}" target="_blank" rel="noopener">Website</a>` : ""}
+          <a class="mapsbtn" href="https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(it.mapAddress)}" target="_blank" rel="noopener">Directions ↗</a>
+        </div>` : "";
+    return `
+      <div class="card ${it.type}">
+        ${artHtml}
+        <div class="toprow">
+          <h3>${it.title}</h3>
+          <span class="typepill">${it.type}</span>
+        </div>
+        <div class="arealabel">${it.area}</div>
+        <div class="distline"><span class="distlbl">From Steamboat</span> ${it.dist || "—"}</div>
+        <div class="stats">${it.stats.map(s=>`<span><b>${s}</b></span>`).join("")}</div>
+        <p class="desc">${it.desc}</p>
+        <div class="tags">
+          <span class="tag diff-${it.diff}">${it.diff}</span>
+          ${kidTag}
+          ${warnTag}
+          ${otherTags}
+        </div>
+        ${photoLink}
+        ${bikeLinks}
+      </div>`;
+  }).join("");
+}
+
+document.querySelectorAll('.chip[data-filter="type"]').forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll('.chip[data-filter="type"]').forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    activeType = btn.dataset.value;
+    render();
+  });
+});
+document.querySelectorAll('.chip[data-filter="area"]').forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    document.querySelectorAll('.chip[data-filter="area"]').forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    activeArea = btn.dataset.value;
+    render();
+  });
+});
+document.getElementById("kidFilter").addEventListener("change", (e)=>{
+  kidOnly = e.target.checked;
+  render();
+});
+
+const revealBtns = document.querySelectorAll(".revealbtn[data-type]");
+const optionsArea = document.getElementById("optionsArea");
+const shoppingArea = document.getElementById("shoppingArea");
+const shopBtn = document.getElementById("revealShopping");
+
+function setTypeChip(type){
+  activeType = type;
+  document.querySelectorAll('.chip[data-filter="type"]').forEach(b=>{
+    b.classList.toggle("active", b.dataset.value === type);
+  });
+}
+
+revealBtns.forEach(btn=>{
+  btn.addEventListener("click", ()=>{
+    const type = btn.dataset.type;
+    const alreadyOpenForThisType = optionsArea.classList.contains("open") && btn.classList.contains("active");
+
+    shoppingArea.classList.remove("open");
+    shopBtn.classList.remove("active");
+    eventsArea.classList.remove("open");
+    eventBtn.classList.remove("active");
+    touristyArea.classList.remove("open");
+    touristyBtn.classList.remove("active");
+    entertainmentArea.classList.remove("open");
+    entertainmentBtn.classList.remove("active");
+    foodArea.classList.remove("open");
+    foodBtn.classList.remove("active");
+    safetyArea.classList.remove("open");
+    safetyBtn.classList.remove("active");
+    rentalArea.classList.remove("open");
+    rentalBtn.classList.remove("active");
+
+    if (alreadyOpenForThisType){
+      optionsArea.classList.remove("open");
+      revealBtns.forEach(b=>b.classList.remove("active"));
+      return;
+    }
+
+    optionsArea.classList.add("open");
+    revealBtns.forEach(b=>b.classList.toggle("active", b === btn));
+    setTypeChip(type);
+    render();
+    optionsArea.scrollIntoView({behavior:"smooth", block:"nearest"});
+  });
+});
+
+/* ---------- Shopping ---------- */
+const shops = {
+  steamboat: [
+    { name:"F.M. Light & Sons", category:"western", catLabel:"Western Wear",
+      dist:"~1.3 mi · 5 min drive (or ~20 min walk)",
+      address:"830 Lincoln Ave, Steamboat Springs, CO 80487",
+      website:"https://fmlight.com/" },
+    { name:"Downtown Lincoln Avenue", category:"walk", catLabel:"Walking District",
+      dist:"~1.3 mi · 5 min drive",
+      address:"Lincoln Ave, Steamboat Springs, CO 80487",
+      website:"https://www.steamboatchamber.com/activities/shopping/" },
+    { name:"Gondola Square", category:"walk", catLabel:"Walking District",
+      dist:"~0.4 mi · 8 min walk",
+      address:"2305 Mt Werner Cir, Steamboat Springs, CO 80487",
+      website:"https://www.steamboat.com/" },
+    { name:"Embellishments of Steamboat Springs", category:"gift", catLabel:"Gifts & Art",
+      dist:"~1.3 mi · 5 min drive",
+      address:"903 Lincoln Ave, Steamboat Springs, CO 80487",
+      website:"https://www.embellishyourhome.com/" }
+  ],
+  denver: [
+    { name:"Rockmount Ranch Wear", category:"western", catLabel:"Western Wear",
+      dist:"~0.3 mi · 6 min walk",
+      address:"1626 Wazee St, Denver, CO 80202",
+      website:"https://www.rockmount.com/" },
+    { name:"16th Street Mall", category:"walk", catLabel:"Walking Mall",
+      dist:"~0.4 mi · 8 min walk",
+      address:"16th Street Mall, Denver, CO 80202",
+      website:"https://www.denver.org/things-to-do/16th-street-mall/" },
+    { name:"Larimer Square", category:"walk", catLabel:"Walking District",
+      dist:"~0.3 mi · 6 min walk",
+      address:"1400 Larimer St, Denver, CO 80202",
+      website:"https://www.larimersquare.com/" },
+    { name:"Cherry Creek Shopping Center", category:"mall", catLabel:"Indoor Mall",
+      dist:"~3.5 mi · 12 min drive",
+      address:"3000 E 1st Ave, Denver, CO 80206",
+      website:"https://shopcherrycreek.com/" },
+    { name:"Park Meadows", category:"mall", catLabel:"Indoor Mall (south metro)",
+      dist:"~20 mi · 30 min drive",
+      address:"8401 Park Meadows Center Dr, Lone Tree, CO 80124",
+      website:"https://www.parkmeadows.com/" }
+  ]
+};
+const shopNotes = {
+  steamboat: "Distances from Legacy Vacation Resorts Suites, 1485 Pine Grove Rd — no indoor mall exists near Steamboat, so downtown Lincoln Ave and Gondola Square are the real walkable options.",
+  denver: "Denver hotel isn't booked yet, so distances are measured from Union Station / downtown (LoDo) as a placeholder — Park Meadows and Cherry Creek will shift more than the downtown spots once it's confirmed."
+};
+
+const shopGrid = document.getElementById("shopGrid");
+const shopNoteEl = document.getElementById("shopNote");
+let activeCity = "steamboat";
+
+function renderShops(){
+  shopNoteEl.textContent = shopNotes[activeCity];
+  shopGrid.innerHTML = shops[activeCity].map(s => {
+    const mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(s.address);
+    return `
+      <div class="shopcard">
+        <div class="toprow">
+          <h3>${s.name}</h3>
+          <span class="catpill cat-${s.category}">${s.catLabel}</span>
+        </div>
+        <div class="shopaddr">${s.address}</div>
+        <div class="distline"><span class="distlbl">Distance</span> ${s.dist}</div>
+        <div class="shopbtnrow">
+          <a class="websitebtn" href="${s.website}" target="_blank" rel="noopener">Website</a>
+          <a class="mapsbtn" href="${mapsUrl}" target="_blank" rel="noopener">Directions ↗</a>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+document.querySelectorAll('#shoppingArea .shoptab').forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll('#shoppingArea .shoptab').forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    activeCity = tab.dataset.city;
+    renderShops();
+  });
+});
+
+shopBtn.addEventListener("click", ()=>{
+  const isOpen = shoppingArea.classList.toggle("open");
+  shopBtn.classList.toggle("active", isOpen);
+  if (isOpen){
+    optionsArea.classList.remove("open");
+    revealBtns.forEach(b=>b.classList.remove("active"));
+    eventsArea.classList.remove("open");
+    eventBtn.classList.remove("active");
+    touristyArea.classList.remove("open");
+    touristyBtn.classList.remove("active");
+    entertainmentArea.classList.remove("open");
+    entertainmentBtn.classList.remove("active");
+    foodArea.classList.remove("open");
+    foodBtn.classList.remove("active");
+    safetyArea.classList.remove("open");
+    safetyBtn.classList.remove("active");
+    rentalArea.classList.remove("open");
+    rentalBtn.classList.remove("active");
+    renderShops();
+    shoppingArea.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+});
+
+/* ---------- Events, Rodeos, Festivals & Markets ---------- */
+const eventsArea = document.getElementById("eventsArea");
+const eventBtn = document.getElementById("revealEvents");
+const eventGrid = document.getElementById("eventGrid");
+const eventNoteEl = document.getElementById("eventNote");
+const eventFyiEl = document.getElementById("eventFyi");
+
+const events = {
+  steamboat: [
+    { name:"Steamboat Springs Farmers Market", category:"market", catLabel:"Farmers Market",
+      date:"Sat, Sep 26 — final market of the season",
+      dist:"~1.3 mi · 5 min drive",
+      address:"Yampa St (5th–8th), Steamboat Springs, CO 80487",
+      desc:"Riverside Saturday market with local produce, ranchers, and artisans, plus live music — lines up with your very first weekend in town.",
+      website:"https://www.mainstreetsteamboat.com/farmers-market/" },
+    { name:"Steamboat Food & Wine Festival", category:"festival", catLabel:"Food & Wine Festival",
+      date:"Oct 1–4 — only Oct 1 falls before your Denver drive",
+      dist:"Venues around town",
+      address:"Steamboat Springs, CO",
+      desc:"Chef dinners, wine tastings, and seminars across town. Heads up: this one is 21-and-over, no kids or infants permitted at festival venues — so it's not really workable with your 4-year-old on this trip. Listed here mainly so you know what it is if you see signs for it.",
+      website:"https://steamboatfoodandwine.com/", warn:"21+ only" }
+  ],
+  denver: [
+    { name:"Union Station Farmers Market", category:"market", catLabel:"Farmers Market",
+      date:"Saturdays, through Oct 26",
+      dist:"At Union Station",
+      address:"Union Station Plaza, 1701 Wynkoop St, Denver, CO 80202",
+      desc:"Right in the historic Union Station plaza — produce, dairy, baked goods, and prepared food. Worth a Saturday-morning look on Oct 3, before you need to get ready for the wedding.",
+      website:"https://visitdenver.com/things-to-do/shopping/farmers-markets/" },
+    { name:"Mile High Flea Market", category:"flea", catLabel:"Flea Market",
+      date:"Fri–Sun, 7am–5pm, year-round",
+      dist:"~12 mi · ~20 min drive",
+      address:"7007 E 88th Ave, Henderson, CO 80640",
+      desc:"80 acres, 3,000+ vendors, a small carnival with kid rides, and a year-round farmers market built in — genuinely fun for a 4-year-old, not just a browsing stop for adults.",
+      website:"https://milehighfleamarket.com/" },
+    { name:"Rocky Mountain Pumpkin Ranch", category:"farm", catLabel:"Pumpkin Patch",
+      date:"Daily; carnival open Sat & Sun through Oct 31 — Oct 4 (Sun) qualifies",
+      dist:"~33 mi · ~40 min drive (in Longmont)",
+      address:"9059 Ute Hwy/CO 66, Longmont, CO 80503",
+      desc:"Free admission, pick-a-pumpkin patch, plus carnival rides, a petting zoo, and food trucks on weekends. It's genuinely in Longmont, so this could double as a fun last morning with a 4-year-old before you head to DEN on Oct 4.",
+      website:"https://rockymtnpumpkinranch.com/" }
+  ]
+};
+const eventNotes = {
+  steamboat: "Distances from Legacy Vacation Resorts Suites, 1485 Pine Grove Rd.",
+  denver: "Distances are a placeholder from Union Station / downtown until the wedding hotel is booked."
+};
+const eventFyi = {
+  steamboat: "FYI — the Steamboat Pro Rodeo Series (Fri/Sat nights) runs June 19–Aug 29, and OktoberWest (the fall beer festival) was Sept 5–6 — both wrap up before you arrive on Sep 25, so neither is bookable this trip.",
+  denver: "FYI — the Great American Beer Festival lands right after you leave (currently slated for the second week of October), so it just misses your Oct 2–4 window."
+};
+
+let activeEventCity = "steamboat";
+
+function renderEvents(){
+  eventNoteEl.textContent = eventNotes[activeEventCity];
+  eventFyiEl.textContent = eventFyi[activeEventCity];
+  eventGrid.innerHTML = events[activeEventCity].map(e => {
+    const mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(e.address);
+    const warnTag = e.warn ? `<span class="tag warntag">${e.warn}</span>` : "";
+    return `
+      <div class="shopcard">
+        <div class="toprow">
+          <h3>${e.name}</h3>
+          <span class="catpill cat-${e.category}">${e.catLabel}</span>
+        </div>
+        <div class="dateline">${e.date}</div>
+        <div class="shopaddr">${e.address}</div>
+        <div class="distline"><span class="distlbl">Distance</span> ${e.dist}</div>
+        <p class="desc" style="margin-top:8px;">${e.desc}</p>
+        ${warnTag ? `<div class="tags" style="margin-bottom:4px;">${warnTag}</div>` : ""}
+        <div class="shopbtnrow">
+          <a class="websitebtn" href="${e.website}" target="_blank" rel="noopener">Website</a>
+          <a class="mapsbtn" href="${mapsUrl}" target="_blank" rel="noopener">Directions ↗</a>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+document.querySelectorAll('#eventsArea .shoptab').forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll('#eventsArea .shoptab').forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    activeEventCity = tab.dataset.city;
+    renderEvents();
+  });
+});
+
+eventBtn.addEventListener("click", ()=>{
+  const isOpen = eventsArea.classList.toggle("open");
+  eventBtn.classList.toggle("active", isOpen);
+  if (isOpen){
+    optionsArea.classList.remove("open");
+    revealBtns.forEach(b=>b.classList.remove("active"));
+    shoppingArea.classList.remove("open");
+    shopBtn.classList.remove("active");
+    touristyArea.classList.remove("open");
+    touristyBtn.classList.remove("active");
+    entertainmentArea.classList.remove("open");
+    entertainmentBtn.classList.remove("active");
+    foodArea.classList.remove("open");
+    foodBtn.classList.remove("active");
+    safetyArea.classList.remove("open");
+    safetyBtn.classList.remove("active");
+    rentalArea.classList.remove("open");
+    rentalBtn.classList.remove("active");
+    renderEvents();
+    eventsArea.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+});
+
+/* ---------- Touristy attractions ---------- */
+const touristyArea = document.getElementById("touristyArea");
+const touristyBtn = document.getElementById("revealTouristy");
+const touristyGrid = document.getElementById("touristyGrid");
+const touristyNoteEl = document.getElementById("touristyNote");
+
+const touristy = {
+  steamboat: [
+    { name:"Steamboat Gondola — Summer Scenic Rides", category:"scenic", catLabel:"Scenic Ride", warn:"Fri–Sun only (Sep 25, 26, 27)",
+      dist:"~0.4 mi · 8 min walk",
+      address:"2305 Mt Werner Cir, Steamboat Springs, CO 80487",
+      hours:"9:30am–4pm, Friday–Sunday only, through Oct 4.",
+      price:"~$45/person for unlimited rides all day, per a recent visitor report — I couldn't confirm an official current rate, so treat this as approximate and check steamboat.com before you go. Kids 4 and under ride free but still need a (free) ticket added.",
+      military:"Not confirmed either way — I didn't find a stated program. Worth asking at the ticket window.",
+      desc:"Rides to the 10,568-ft summit of Mount Werner for views across the Flat Tops, Park Range, and into Wyoming on a clear day. Runs Friday–Sunday only, through Oct 4 — so Sept 25, 26, 27 are your windows, not the Mon–Thu stretch.",
+      website:"https://www.steamboat.com/things-to-do/activities/summer-scenic-rides" },
+    { name:"Old Town Hot Springs", category:"springs", catLabel:"Hot Springs", warn:"Confirm water slide dates",
+      dist:"~1.3 mi · 5 min drive",
+      address:"136 Lincoln Ave, Steamboat Springs, CO 80487",
+      hours:"Open daily, year-round, except Thanksgiving and Christmas.",
+      price:"~$29 for adult daily admission (soaking pools, climbing wall, splash pad), per a third-party source — I couldn't pull the official rate table, so confirm exact pricing on their Rates page. Water slides are a $7 add-on when running.",
+      military:"Not confirmed — no dedicated program turned up in what I could find. Worth calling ahead: 970-879-1828.",
+      desc:"Nine mineral pools right downtown, open year-round with no reservation needed — an easier, more toddler-friendly option than Strawberry Park. One correction from earlier: I'd said the water slides were summer-only, but their own FAQ describes them as open seasonally with an indoor, climate-controlled starting tower — so their exact fall schedule isn't as clear-cut as I first said. Worth confirming directly rather than counting on either way.",
+      website:"https://oldtownhotsprings.org/",
+      ticketsUrl:"https://oldtownhotsprings.org/rates/" },
+    { name:"Snow Bowl Steamboat", category:"bowling", catLabel:"Bowling & Arcade", warn:"Good storm-day backup (Sep 28–29)",
+      dist:"~1.8 mi · 6 min drive",
+      address:"2090 Snow Bowl Plz, Steamboat Springs, CO 80487",
+      hours:"Opens 4pm daily except Mon (closed). Fri/Sat until 11pm, other nights until 10pm.",
+      price:"Per-game/lane pricing plus shoe rental — check snowbowlsteamboat.com/hours for the current rate card.",
+      military:"Not confirmed — no dedicated program found.",
+      desc:"12 lanes, arcade games, and a full food/bar menu — the obvious pivot for the Sep 28–29 stretch when the forecast turns to storms and showers. Doesn't open till 4pm, so it's an evening plan, not a morning one.",
+      website:"https://snowbowlsteamboat.com/" },
+    { name:"Howelsen Ice Arena — Public Skate", category:"skating", catLabel:"Ice Skating", warn:"Call ahead for public skate times",
+      dist:"~1.1 mi · 4 min drive",
+      address:"285 Howelsen Pkwy, Steamboat Springs, CO 80487",
+      hours:"Facility open 6am–11pm daily; public skate runs specific windows within that — call (970) 871-7033 or check the city's monthly activity schedule before heading over.",
+      price:"Skate rental available on-site; admission is inexpensive walk-up pricing at the window.",
+      military:"Not confirmed — no dedicated program found.",
+      desc:"Indoor Olympic-sized rink right below the ski area — genuinely fun with a 4-year-old, including bumper cars on ice at some sessions. Another solid indoor option for the wetter Sep 28–29 window, or any low-energy afternoon.",
+      website:"https://steamboatsprings.net/132/Howelsen-Ice-Arena" },
+    { name:"Tread of Pioneers Museum", category:"museum", catLabel:"History Museum", warn:"Closed Sun & Mon",
+      dist:"~1.3 mi · 5 min drive",
+      address:"800 Oak St, Steamboat Springs, CO 80487",
+      hours:"Tue–Sat, 11am–5pm, year-round. Closed Sun, Mon, and a few major holidays.",
+      price:"$6 adults · $5 seniors · $2 children under 12 (under 6 free) · Free for Routt County residents with ID.",
+      military:"No dedicated military discount found or stated.",
+      desc:"Steamboat's history museum in a restored 1901 Queen Anne Victorian home — Ute history, ranching, and the town's outsized number of Olympic skiers. A good rainy-afternoon or low-key option — just not on a Sunday or Monday.",
+      website:"https://www.treadofpioneers.org/" },
+    { name:"Glenwood Caverns Adventure Park", category:"amusement", catLabel:"Amusement Park", warn:"Bigger day trip — 2h15m each way",
+      dist:"113 mi · ~2h15m",
+      address:"51000 Two Rivers Plaza Rd, Glenwood Springs, CO 81601",
+      hours:"Varies by day (commonly 10am–5pm or 9am–7pm) — check their online calendar for your exact dates before you go.",
+      price:"Summer Funday (everything) $79.99 online / $84.99 gate · Gondola + 1 Cave $52.99 / $57.99 gate · Gondola only $32.99 / $37.99 gate · Kids 0–2 free. Fall pricing may shift slightly from these summer rates I pulled.",
+      military:"Yes — discount at the gondola ticket window for military members. Ask before you pay; in-person purchase only, not available online, one discount per transaction.",
+      desc:"The real find for an amusement park near Steamboat — America's only mountaintop theme park, reached by its own scenic gondola 4,300 ft up Iron Mountain. Defiance (the highest looping coaster in the US) and the Cliffhanger coaster are the big thrill rides, plus an Alpine Coaster, Giant Canyon Swing, and cave tours. Also genuinely kid-friendly options for a 4-year-old: the Mine Wheel, 4D Motion Theater, laser tag, and the cave tours themselves. Open year-round, so any day of your Steamboat stay works — just a bigger day trip than the rest of this list, so plan for most of a day.",
+      website:"https://www.glenwoodcaverns.com/",
+      ticketsUrl:"https://www.glenwoodcaverns.com/park-info/tickets/" }
+  ],
+  denver: [
+    { name:"Elitch Gardens Theme &amp; Water Park", category:"amusement", catLabel:"Amusement Park", warn:"Fall hours vary — confirm Oct 4",
+      dist:"~1.5 mi · 6 min drive",
+      address:"2000 Elitch Cir, Denver, CO 80204",
+      hours:"Opens around 10:30am; closing time and which days it's even open both vary week to week in fall (Fright Fest runs on a limited schedule, not daily) — check their official calendar for Oct 4 specifically before planning around it.",
+      price:"Genuinely inconsistent across sources when I checked — anywhere from ~$40s online-advance up to ~$60–75 at the gate, depending on date. I don't trust any single number enough to give you one — check elitchgardens.com directly for Oct 4 pricing. Kids 2 and under free.",
+      military:"Not a direct gate discount — per their own FAQ, discounted tickets for military are sold through most Colorado military base ITT/Special Services offices, not at the park. Contact your nearest base for pricing.",
+      desc:"Denver's downtown amusement park — the actual amusement-park option from your original wish list. Open through October with Fright Fest, though the water park itself is Memorial Day–Labor Day only. Best bet is Oct 4 (departure day) if the timing works before your flight — check that day's specific hours first, since fall scheduling is limited to select days.",
+      website:"https://www.elitchgardens.com/",
+      ticketsUrl:"https://elitchgardens.com/tickets/day-tickets/" },
+    { name:"Denver Zoo", category:"garden", catLabel:"Zoo",
+      dist:"~3 mi · 10 min drive",
+      address:"2300 Steele St, Denver, CO 80205",
+      hours:"Daily, 9am–4pm, year-round. Timed-entry reservation required (book online, pick an entry window; you can stay past it).",
+      price:"Adults (16–64) $27 · Seniors (65+) $24 · Youth (3–15) $19 · Under 2 free. General admission goes on sale 10 days ahead and is non-refundable.",
+      military:"No dedicated military discount — confirmed directly on their site and independently. The only listed discounts are 15% for members/nonprofit-government groups, SNAP/EBT ($5 admission), and a limited Community Free Days lottery.",
+      desc:"80 acres in historic City Park — genuinely well-regarded exhibits (the elevated tiger walkway and multi-story primate habitat stand out) and an easy full morning or afternoon with a 4-year-old.",
+      website:"https://denverzoo.org/",
+      ticketsUrl:"https://my.denverzoo.org/events?kid=5&view=calendar" },
+    { name:"Denver Botanic Gardens", category:"garden", catLabel:"Gardens",
+      dist:"~3 mi · 10 min drive",
+      address:"1007 York St, Denver, CO 80206",
+      hours:"Open year-round; exact daily hours shift seasonally — check their site for your date.",
+      price:"~$17 adult general admission, based on third-party resellers — I couldn't pull the exact current rate table from their own site, so confirm before you go. SNAP/EBT: $3/person (up to 6).",
+      military:"Yes — discounted general admission rate at the gate with valid military ID, per multiple consistent sources. Separately, military members also get $10 off any membership level if you're considering one.",
+      desc:"24 acres of themed gardens and a conservatory near Cheesman Park — a calmer, more low-key option than the zoo if you want a couple of easy walkable hours.",
+      website:"https://www.botanicgardens.org/",
+      ticketsUrl:"https://www.botanicgardens.org/tickets-log" }
+  ]
+};
+const touristyNotes = {
+  steamboat: "Distances from Legacy Vacation Resorts Suites, 1485 Pine Grove Rd.",
+  denver: "Distances are a placeholder from Union Station / downtown until the wedding hotel is booked."
+};
+
+let activeTouristyCity = "steamboat";
+
+function renderTouristy(){
+  touristyNoteEl.textContent = touristyNotes[activeTouristyCity];
+  touristyGrid.innerHTML = touristy[activeTouristyCity].map(t => {
+    const mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(t.address);
+    const warnTag = t.warn ? `<div class="tags" style="margin-bottom:8px;"><span class="tag warntag">⚠ ${t.warn}</span></div>` : "";
+    const infoRows = [
+      t.hours ? `<div class="distline"><span class="distlbl">Hours</span> ${t.hours}</div>` : "",
+      t.price ? `<div class="distline"><span class="distlbl">Tickets</span> ${t.price}</div>` : "",
+      t.military ? `<div class="distline"><span class="distlbl">Military</span> ${t.military}</div>` : ""
+    ].join("");
+    return `
+      <div class="shopcard">
+        <div class="toprow">
+          <h3>${t.name}</h3>
+          <span class="catpill cat-${t.category}">${t.catLabel}</span>
+        </div>
+        <div class="shopaddr">${t.address}</div>
+        <div class="distline"><span class="distlbl">Distance</span> ${t.dist}</div>
+        ${infoRows}
+        ${warnTag}
+        <p class="desc" style="margin-top:2px;">${t.desc}</p>
+        <div class="shopbtnrow">
+          <a class="websitebtn" href="${t.website}" target="_blank" rel="noopener">Website</a>
+          ${t.ticketsUrl ? `<a class="mapsbtn" href="${t.ticketsUrl}" target="_blank" rel="noopener">Tickets ↗</a>` : ""}
+          <a class="mapsbtn" href="${mapsUrl}" target="_blank" rel="noopener">Directions ↗</a>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+document.querySelectorAll('#touristyArea .shoptab').forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll('#touristyArea .shoptab').forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    activeTouristyCity = tab.dataset.city;
+    renderTouristy();
+  });
+});
+
+touristyBtn.addEventListener("click", ()=>{
+  const isOpen = touristyArea.classList.toggle("open");
+  touristyBtn.classList.toggle("active", isOpen);
+  if (isOpen){
+    optionsArea.classList.remove("open");
+    revealBtns.forEach(b=>b.classList.remove("active"));
+    shoppingArea.classList.remove("open");
+    shopBtn.classList.remove("active");
+    eventsArea.classList.remove("open");
+    eventBtn.classList.remove("active");
+    entertainmentArea.classList.remove("open");
+    entertainmentBtn.classList.remove("active");
+    foodArea.classList.remove("open");
+    foodBtn.classList.remove("active");
+    safetyArea.classList.remove("open");
+    safetyBtn.classList.remove("active");
+    rentalArea.classList.remove("open");
+    rentalBtn.classList.remove("active");
+    renderTouristy();
+    touristyArea.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+});
+
+/* ---------- Dinner Theater & Live Entertainment ---------- */
+const entertainmentArea = document.getElementById("entertainmentArea");
+const entertainmentBtn = document.getElementById("revealEntertainment");
+const entertainmentGrid = document.getElementById("entertainmentGrid");
+const entertainmentNoteEl = document.getElementById("entertainmentNote");
+const entertainmentFyiEl = document.getElementById("entertainmentFyi");
+
+const entertainment = {
+  steamboat: [
+    { name:"Strings Music Pavilion", category:"music", catLabel:"Live Music Venue", warn:"No confirmed show in your dates yet",
+      dist:"~1.5 mi · 6 min drive",
+      address:"900 Strings Rd, Steamboat Springs, CO 80487",
+      hours:"569-seat concert hall; showtimes vary by event.",
+      price:"Varies widely by artist — tickets have started around $15 and run well past $100 for bigger names.",
+      military:"Not confirmed — no stated program found.",
+      desc:"Steamboat's real live-music venue, an intimate 569-seat hall that's hosted 100+ Grammy winners. Their classical summer season wraps by late August, and the two specific fall dates I could find bracket your trip (Sept 20 before you arrive, Oct 17 after you leave) rather than fall inside it. Their full fall calendar isn't necessarily locked in this far out, though, so it's worth a check closer to your trip rather than writing it off.",
+      website:"https://stringsmusicfestival.com/" },
+    { name:"Steamboat Swings — Studio Dance Party", category:"dance", catLabel:"Social Dance Night", warn:"Adults, casual — not real line dancing",
+      dist:"~1.4 mi · 5 min drive",
+      address:"1955 Bridge Ln #1900, Steamboat Springs, CO 80487",
+      hours:"2nd & 4th Saturdays, 7–9pm — Sept 26 lands on one of those Saturdays, right in your window.",
+      price:"$5 suggested donation.",
+      military:"Not confirmed — no stated program found.",
+      desc:"Honest answer for Steamboat: there's no dedicated country line-dancing bar here. This is the closest real thing — a casual social dance night mixing West Coast Swing, waltz, a bit of Latin, and some line dances into one evening. No lesson, no partner needed, come-as-you-are. It's an adults' social scene, not a family activity, but the date happens to line up with your trip.",
+      website:"https://steamboatswings.com/" },
+    { name:"Middle Park Medical Foundation — Country B.A.S.H.", category:"dance", catLabel:"Community Hangar Dance", warn:"Likely conflicts with your early Oct 4 flight",
+      dist:"~55 mi · ~1 hr 10 min (Kremmling)",
+      address:"McElroy Airfield, 1701 Eagle Ave, Kremmling, CO 80459",
+      hours:"Historically ~5:30–10pm. Ran Oct 4, 2024 (1st Annual) and Oct 4, 2025 (2nd Annual) — a real two-year pattern on that exact date, not a one-off.",
+      price:"Past years: $50 adults, $10 kids ages 6–12.",
+      military:"Not confirmed — no stated program found.",
+      desc:"A genuine lead — family-friendly hangar dance fundraiser with live country music, barbecue, and real dancing, all ages welcome. Run twice now, both times on Oct 4 evening. Now that your flight leaves early on Oct 4, this one almost certainly doesn't work if the pattern holds again — you'd already be at the airport. Leaving it here in case the date ever shifts, but don't plan around it.",
+      website:"https://www.middleparkmedicalfoundation.org/" }
+  ],
+  denver: [
+    { name:"Casa Bonita", category:"dinner", catLabel:"Dinner Theater", warn:"Reservations required — no walk-ins",
+      dist:"~8 mi · 15 min drive (Lakewood)",
+      address:"6715 W Colfax Ave, Lakewood, CO 80214",
+      hours:"Tue–Wed 4–10:30pm · Thu–Sat 11am–10:30pm · Sun 11am–4:30pm · Closed Mondays.",
+      price:"Adult entrées $29.99–$39.99 · Kids' entrées $19.99–$24.99. Price covers the meal; the show is included.",
+      military:"Not confirmed — no dedicated program found.",
+      desc:"This is the real find for your list — genuinely a dinner theater, not just a restaurant. Cliff divers off a real 30-ft waterfall, puppet shows, magicians, and roaming characters, all while you eat. Now owned by the 'South Park' creators and fully renovated. Reservations are required well in advance through their website — no walk-ins — and it's running its 'Casa BOOnita' Halloween theme through October, which lines up with your Denver dates.",
+      website:"https://www.casabonitadenver.com/",
+      ticketsUrl:"https://www.casabonitadenver.com/reservations" },
+    { name:"The Grizzly Rose", category:"dance", catLabel:"Country Dance Hall", warn:"No real window fits your trip now",
+      dist:"~7 mi · 15 min drive",
+      address:"5450 N Valley Hwy, Denver, CO 80216",
+      hours:"Sun 6pm–12am is Family Night — all ages, kids free — but that's Oct 4, your flight day. Fri Oct 2 is a concert night (Randy Rogers Band) and is 18+ only per their own policy, so not a family fallback either.",
+      price:"Family Night: free for kids, cover varies for adults. Oct 2 concert tickets run ~$35.71.",
+      military:"Not confirmed — no dedicated program found.",
+      desc:"Genuinely the real answer for Denver line dancing — a real honky-tonk since 1989 with an actual dance floor. But checking it against your actual schedule: Sunday Family Night is your flight day, and Friday Oct 2 (your one open Denver evening) is an 18-and-over ticketed concert night, not a family or open-floor night. Between the wedding on Saturday and the early Sunday flight, there isn't a real window left for this one on this trip.",
+      website:"https://grizzlyrose.com/" },
+    { name:"Meow Wolf Denver — Convergence Station", category:"immersive", catLabel:"Immersive Art",
+      dist:"~2 mi · 8 min drive",
+      address:"1338 1st St, Denver, CO 80204",
+      hours:"Check website for current daily hours — they vary.",
+      price:"~$45/adult for general admission, per third-party ticket sellers — confirm exact current pricing and any kids' rate on their own site.",
+      military:"Not confirmed — no dedicated program found.",
+      desc:"Not dinner theater exactly, but genuinely great 'live entertainment' — a four-story, walk-through immersive art experience across four surreal worlds, all ages welcome. Ties in well with the artsy side of your original wish list. No food/drink inside, so plan dinner separately.",
+      website:"https://www.meowwolf.com/visit/denver" }
+  ]
+};
+const entertainmentNotes = {
+  steamboat: "Distances from Legacy Vacation Resorts Suites, 1485 Pine Grove Rd.",
+  denver: "Distances are a placeholder from Union Station / downtown until the wedding hotel is booked."
+};
+const entertainmentFyi = {
+  steamboat: "FYI — Schmiggity's is Steamboat's other live-music spot downtown, but it's a bar/dance-bar venue, not really a family fit for a 4-year-old.",
+  denver: "FYI — I also looked into BDT Stage (Boulder's dinner theater). Sources conflict: reliable news coverage from 2022 describes its building being sold and a planned final season, but some ticketing sites still list 2026 shows under its name. That's contradictory enough that I didn't want to build a card around it — if you're curious, verify directly with bdtstage.com before planning around it."
+};
+
+let activeEntCity = "steamboat";
+
+function renderEntertainment(){
+  entertainmentNoteEl.textContent = entertainmentNotes[activeEntCity];
+  entertainmentFyiEl.textContent = entertainmentFyi[activeEntCity];
+  entertainmentGrid.innerHTML = entertainment[activeEntCity].map(e => {
+    const mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(e.address);
+    const warnTag = e.warn ? `<div class="tags" style="margin-bottom:8px;"><span class="tag warntag">⚠ ${e.warn}</span></div>` : "";
+    const infoRows = [
+      e.hours ? `<div class="distline"><span class="distlbl">Hours</span> ${e.hours}</div>` : "",
+      e.price ? `<div class="distline"><span class="distlbl">Price</span> ${e.price}</div>` : "",
+      e.military ? `<div class="distline"><span class="distlbl">Military</span> ${e.military}</div>` : ""
+    ].join("");
+    return `
+      <div class="shopcard">
+        <div class="toprow">
+          <h3>${e.name}</h3>
+          <span class="catpill cat-${e.category}">${e.catLabel}</span>
+        </div>
+        <div class="shopaddr">${e.address}</div>
+        <div class="distline"><span class="distlbl">Distance</span> ${e.dist}</div>
+        ${infoRows}
+        ${warnTag}
+        <p class="desc" style="margin-top:2px;">${e.desc}</p>
+        <div class="shopbtnrow">
+          <a class="websitebtn" href="${e.website}" target="_blank" rel="noopener">Website</a>
+          ${e.ticketsUrl ? `<a class="mapsbtn" href="${e.ticketsUrl}" target="_blank" rel="noopener">Reserve ↗</a>` : ""}
+          <a class="mapsbtn" href="${mapsUrl}" target="_blank" rel="noopener">Directions ↗</a>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+document.querySelectorAll('#entertainmentArea .shoptab').forEach(tab=>{
+  tab.addEventListener("click", ()=>{
+    document.querySelectorAll('#entertainmentArea .shoptab').forEach(t=>t.classList.remove("active"));
+    tab.classList.add("active");
+    activeEntCity = tab.dataset.city;
+    renderEntertainment();
+  });
+});
+
+entertainmentBtn.addEventListener("click", ()=>{
+  const isOpen = entertainmentArea.classList.toggle("open");
+  entertainmentBtn.classList.toggle("active", isOpen);
+  if (isOpen){
+    optionsArea.classList.remove("open");
+    revealBtns.forEach(b=>b.classList.remove("active"));
+    shoppingArea.classList.remove("open");
+    shopBtn.classList.remove("active");
+    eventsArea.classList.remove("open");
+    eventBtn.classList.remove("active");
+    touristyArea.classList.remove("open");
+    touristyBtn.classList.remove("active");
+    foodArea.classList.remove("open");
+    foodBtn.classList.remove("active");
+    safetyArea.classList.remove("open");
+    safetyBtn.classList.remove("active");
+    rentalArea.classList.remove("open");
+    rentalBtn.classList.remove("active");
+    renderEntertainment();
+    entertainmentArea.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+});
+
+/* ---------- Food — parallel picks across Steamboat & Denver ---------- */
+const foodArea = document.getElementById("foodArea");
+const foodBtn = document.getElementById("revealFood");
+const foodGrid = document.getElementById("foodGrid");
+
+const foodByArea = [
+  {
+    area:"In Town", denver:false,
+    pairsWith:["Fish Creek Falls","Yampa River Core Trail","Botanic Park","Farmers Market","Steamboat Gondola","Old Town Hot Springs","Downtown shopping"],
+    name:"Winona's Restaurant and Bakery", address:"617 Lincoln Ave, Steamboat Springs, CO 80487",
+    rating:4.6, reviews:"1,280, Tripadvisor", dist:"~1.3 mi · 5 min drive",
+    desc:"Steamboat's most iconic breakfast spot, right on Lincoln Ave — a natural fuel-up before any of the town-based days above. Famous for giant homemade cinnamon rolls. Daily 7am–3pm, gets busy, so go early with a 4-year-old in tow.",
+    website:"https://www.winonasrestaurant.com/" },
+  {
+    area:"Zirkel Wilderness", denver:false,
+    pairsWith:["Gilpin Lake / Zirkel Circle","Mad Creek Trail","Gold Creek Lake Trail","Stagecoach bike ride"],
+    name:"Mountain Tap Brewery", address:"910 Yampa St, Steamboat Springs, CO 80487",
+    rating:4.7, reviews:"768, Tripadvisor", dist:"~1.3 mi · 5 min drive",
+    desc:"There's no real food out at the Slavonia or Stagecoach trailheads, so the honest move is fueling up in town before you go, or rewarding yourselves after — wood-fired pizza and root beer for the kids, a low-stress landing after a big hiking day.",
+    website:"https://www.mountaintapbrewery.com/" },
+  {
+    area:"Flat Tops", denver:false,
+    pairsWith:["Devil's Causeway","Rabbit Ears Peak","Elk River Road","Yampa (town)"],
+    name:"Antlers Cafe & Bar", address:"40 Moffat Ave, Yampa, CO 80483",
+    rating:4.5, reviews:"50, Tripadvisor — ranked #1 of 3 restaurants in Yampa", dist:"22 mi · ~39 min",
+    desc:"This is the actual restaurant in Yampa, the gateway town already on the board for this day. A restored 1904 saloon, hunting-trophy Old West atmosphere, hearty burgers and BBQ — genuinely worth the stop after Devil's Causeway, not just a gas-station-town default.",
+    website:"https://antlerscafeandbar.com/" },
+  {
+    area:"North Routt", denver:false,
+    pairsWith:["Hahn's Peak","Steamboat Lake / Willow Creek Trail","Clark"],
+    name:"The Clark Store", address:"54175 RCR 129, Clark, CO 80428",
+    rating:4.0, reviews:"38, Yelp", dist:"16 mi · ~29 min",
+    desc:"Already on the board as the Clark stop — doubles as your food pairing for this day too. Sandwiches and the classic ice-cream patio overlooking the valley, right on the way back from Hahn's Peak or Steamboat Lake. Rating's a touch lower than the others here, mostly reviews mentioning it's less consistent than it used to be — still the only real option out that way.",
+    website:"https://clarkstore.com/" },
+  {
+    area:"Buffalo Pass", denver:false,
+    pairsWith:["Spring Creek Trail","Long Lake Loop","Strawberry Park Hot Springs"],
+    name:"Salt & Lime", address:"Steamboat Springs, CO 80487",
+    rating:4.4, reviews:"661, Tripadvisor", dist:"~1.3 mi · 5 min drive",
+    desc:"Casual modern Mexican downtown — $5 tacos and $9 margaritas at happy hour. Good call for dinner in town before or after an evening soak at Strawberry Park, since there's no food up at the springs themselves.",
+    website:"https://saltandlimesteamboat.com/" },
+  {
+    area:"Grand Lake / RMNP", denver:false,
+    pairsWith:["Coyote Valley Trail","Adams Falls","Grand Lake (town)"],
+    name:"Grand Pizza", address:"1131 Grand Ave, Grand Lake, CO 80447",
+    rating:4.5, reviews:"445, Tripadvisor — ranked #1 of 23 restaurants in Grand Lake", dist:"94 mi · ~2 hrs",
+    desc:"Right on the Grand Lake boardwalk, in the same walkable strip as the town stop already on the board — family-friendly with a real kids' menu, an easy lunch between Coyote Valley and Adams Falls.",
+    website:"https://grand-pizza.com/" },
+  {
+    area:"Denver / Boulder", denver:true,
+    pairsWith:["Cherry Creek Trail","Boulder Creek Path","Union Station Farmers Market","Mile High Flea Market","LoDo / Larimer Square shopping"],
+    name:"Snooze, an A.M. Eatery", address:"1701 Wynkoop St, Denver, CO 80202",
+    rating:4.5, reviews:"1,016, Tripadvisor", dist:"At Union Station",
+    desc:"The flagship Snooze location, literally inside Union Station — pairs perfectly with a Saturday-morning Farmers Market visit, or as a launch point before Cherry Creek Trail or the LoDo shops. Expect a wait on weekends.",
+    website:"https://www.snoozeeatery.com/restaurant/colorado/union-station" },
+  {
+    area:"Denver / Boulder — Dinner", denver:true,
+    pairsWith:["Larimer Square shopping","Meow Wolf Denver","16th Street Mall"],
+    name:"Osteria Marco", address:"1453 Larimer St, Denver, CO 80202",
+    rating:4.4, reviews:"2,345+, Tripadvisor/Yelp", dist:"~0.4 mi · 8 min walk from Union Station",
+    desc:"Casual, genuinely good Italian right in Larimer Square — house-made burrata, wood-fired flatbreads, and a big charcuterie/cheese spread. Good pick for an evening out on your one open Denver night (Oct 2), before or after Meow Wolf. Can get loud/crowded on weekends — worth a reservation.",
+    website:"https://osteriamarco.com/" },
+  {
+    area:"Longmont (Wedding Day)", denver:true,
+    pairsWith:["Wedding — Longmont","Rocky Mountain Pumpkin Ranch","Union Station Farmers Market"],
+    name:"Longs Peak Pub & Taphouse", address:"600 Longs Peak Ave Unit E, Longmont, CO 80501",
+    rating:4.3, reviews:"400+, Tripadvisor/Yelp — #10 of 218 restaurants in Longmont", dist:"~33 mi · ~40 min from Denver hotel",
+    desc:"A genuine local pick actually in Longmont, not just Denver — craft beers, solid pub food, and a family-friendly patio next to Roosevelt Park. Good option for lunch before the wedding on Oct 3, or a low-key bite if you're already out that way for the Pumpkin Ranch on Oct 4.",
+    website:"https://www.mountainsunpub.com/location/longs-peak-pub/" }
+];
+
+function starString(rating){
+  const full = Math.round(rating);
+  return "★".repeat(full) + "☆".repeat(5 - full);
+}
+
+function renderFood(){
+  foodGrid.innerHTML = foodByArea.map(f => {
+    const mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(f.address);
+    const tags = f.pairsWith.map(p => `<span class="ptag">${p}</span>`).join("");
+    return `
+      <div class="foodblock ${f.denver ? "denver" : ""}">
+        <h3 class="foodarea-title">${f.area}</h3>
+        <div class="pairswith"><span class="plabel">Pairs with</span>${tags}</div>
+        <div class="foodcard">
+          <div class="toprow">
+            <h4>${f.name}</h4>
+            <span class="foodrating">${starString(f.rating)} <b>${f.rating}</b></span>
+          </div>
+          <div class="foodaddr">${f.address} · <span class="reviewcount">${f.reviews}</span></div>
+          <div class="distline"><span class="distlbl">Distance</span> ${f.dist}</div>
+          <p class="desc">${f.desc}</p>
+          <div class="foodbtnrow">
+            <a class="websitebtn" href="${f.website}" target="_blank" rel="noopener">Website</a>
+            <a class="mapsbtn" href="${mapsUrl}" target="_blank" rel="noopener">Directions ↗</a>
+          </div>
+        </div>
+      </div>`;
+  }).join("") + `
+    <p class="eventfyi">FYI — Estes Park/RMNP East and Arapaho &amp; Roosevelt NF don't have a food pick yet since those are still "decide that week" days rather than confirmed plans. Happy to add one if you settle on either. Star ratings are pulled from Tripadvisor/Yelp as of my last check and will drift over time — treat them as a snapshot, not live.</p>`;
+}
+
+foodBtn.addEventListener("click", ()=>{
+  const isOpen = foodArea.classList.toggle("open");
+  foodBtn.classList.toggle("active", isOpen);
+  if (isOpen){
+    optionsArea.classList.remove("open");
+    revealBtns.forEach(b=>b.classList.remove("active"));
+    shoppingArea.classList.remove("open");
+    shopBtn.classList.remove("active");
+    eventsArea.classList.remove("open");
+    eventBtn.classList.remove("active");
+    touristyArea.classList.remove("open");
+    touristyBtn.classList.remove("active");
+    entertainmentArea.classList.remove("open");
+    entertainmentBtn.classList.remove("active");
+    safetyArea.classList.remove("open");
+    safetyBtn.classList.remove("active");
+    rentalArea.classList.remove("open");
+    rentalBtn.classList.remove("active");
+    renderFood();
+    foodArea.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+});
+
+/* ---------- Safety & Prep ---------- */
+const safetyArea = document.getElementById("safetyArea");
+const safetyBtn = document.getElementById("revealSafety");
+const medGrid = document.getElementById("medGrid");
+
+const medFacilities = [
+  { name:"UCHealth Yampa Valley Medical Center", category:"medical", catLabel:"Hospital ER — 24/7",
+    address:"1024 Central Park Dr, Steamboat Springs, CO 80487", phone:"(970) 879-1322",
+    desc:"Level III Trauma Center, open 24/7. The only hospital-based ER in Steamboat Springs — this is the one to go to for anything serious." },
+  { name:"UCHealth Urgent Care — Steamboat", category:"medical", catLabel:"Urgent Care",
+    address:"1600 Mid Valley Dr Unit A, Steamboat Springs, CO 80487", phone:"(970) 871-9770",
+    desc:"For non-emergency issues — minor injuries, illness — that don't need a full ER visit. Check current hours before heading over." },
+  { name:"Children's Hospital Colorado at Saint Joseph — Downtown Denver", category:"medical", catLabel:"Pediatric ER — 24/7",
+    address:"1830 Franklin St, Denver, CO 80218", phone:"(720) 777-1360",
+    desc:"Worth knowing specifically because of the 4-year-old — a dedicated pediatric emergency department, staffed by Children's Colorado, open 24/7, right in downtown Denver." },
+  { name:"Saint Joseph Hospital — Denver", category:"medical", catLabel:"Hospital ER — 24/7",
+    address:"1375 E 19th Ave, Denver, CO 80218", phone:"(303) 812-2000",
+    desc:"General adult/family ER, 24/7, same campus as the pediatric ER above — the fallback for anything not kid-specific." },
+  { name:"Denver Health Downtown Urgent Care", category:"medical", catLabel:"Urgent Care — weekday hours",
+    address:"1545 California St, Denver, CO 80202", phone:"",
+    desc:"Right downtown, walkable from LoDo — but Mon–Thu 7am–7pm only, not 24/7 and not for true emergencies. Confirm weekend hours before relying on it." }
+];
+
+function renderMed(){
+  medGrid.innerHTML = medFacilities.map(m => {
+    const mapsUrl = "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(m.address);
+    return `
+      <div class="shopcard">
+        <div class="toprow">
+          <h3>${m.name}</h3>
+          <span class="catpill cat-${m.category}">${m.catLabel}</span>
+        </div>
+        <div class="shopaddr">${m.address}${m.phone ? " · " + m.phone : ""}</div>
+        <p class="desc" style="margin-top:8px;">${m.desc}</p>
+        <div class="shopbtnrow">
+          <a class="mapsbtn" href="${mapsUrl}" target="_blank" rel="noopener">Directions ↗</a>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+safetyBtn.addEventListener("click", ()=>{
+  const isOpen = safetyArea.classList.toggle("open");
+  safetyBtn.classList.toggle("active", isOpen);
+  if (isOpen){
+    optionsArea.classList.remove("open");
+    revealBtns.forEach(b=>b.classList.remove("active"));
+    shoppingArea.classList.remove("open");
+    shopBtn.classList.remove("active");
+    eventsArea.classList.remove("open");
+    eventBtn.classList.remove("active");
+    touristyArea.classList.remove("open");
+    touristyBtn.classList.remove("active");
+    entertainmentArea.classList.remove("open");
+    entertainmentBtn.classList.remove("active");
+    foodArea.classList.remove("open");
+    foodBtn.classList.remove("active");
+    rentalArea.classList.remove("open");
+    rentalBtn.classList.remove("active");
+    renderMed();
+    safetyArea.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+});
+
+/* ---------- Rental Car (placeholder) ---------- */
+const rentalArea = document.getElementById("rentalArea");
+const rentalBtn = document.getElementById("revealRental");
+
+rentalBtn.addEventListener("click", ()=>{
+  const isOpen = rentalArea.classList.toggle("open");
+  rentalBtn.classList.toggle("active", isOpen);
+  if (isOpen){
+    optionsArea.classList.remove("open");
+    revealBtns.forEach(b=>b.classList.remove("active"));
+    shoppingArea.classList.remove("open");
+    shopBtn.classList.remove("active");
+    eventsArea.classList.remove("open");
+    eventBtn.classList.remove("active");
+    touristyArea.classList.remove("open");
+    touristyBtn.classList.remove("active");
+    entertainmentArea.classList.remove("open");
+    entertainmentBtn.classList.remove("active");
+    foodArea.classList.remove("open");
+    foodBtn.classList.remove("active");
+    safetyArea.classList.remove("open");
+    safetyBtn.classList.remove("active");
+    rentalArea.scrollIntoView({behavior:"smooth", block:"nearest"});
+  }
+});
+
+render();
+
+/* ---------- Live weather (Open-Meteo, no key required) ---------- */
+const WEATHER_TARGETS = {
+  steamboat: { lat:40.4850, lon:-106.8317, dates:["2026-09-25","2026-09-26","2026-09-27","2026-09-28","2026-09-29","2026-09-30","2026-10-01"] },
+  denver:    { lat:39.7392, lon:-104.9903, dates:["2026-10-02","2026-10-03","2026-10-04"] }
+};
+
+function weatherIcon(code){
+  if (code === 0) return "☀️";
+  if ([1,2].includes(code)) return "🌤️";
+  if (code === 3) return "☁️";
+  if ([45,48].includes(code)) return "🌫️";
+  if ([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code)) return "🌧️";
+  if ([71,73,75,77,85,86].includes(code)) return "❄️";
+  if ([95,96,99].includes(code)) return "⛈️";
+  return "🌡️";
+}
+function fmtDate(iso){
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString("en-US", {month:"short", day:"numeric"});
+}
+
+async function fetchLiveWeather(key){
+  const t = WEATHER_TARGETS[key];
+  const start = t.dates[0], end = t.dates[t.dates.length - 1];
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${t.lat}&longitude=${t.lon}` +
+              `&daily=weathercode,temperature_2m_max,temperature_2m_min,precipitation_probability_mean` +
+              `&temperature_unit=fahrenheit&timezone=America%2FDenver&start_date=${start}&end_date=${end}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error("weather fetch failed: " + res.status);
+  const data = await res.json();
+  if (!data.daily || !data.daily.time) throw new Error("no daily data");
+
+  const rows = t.dates.map(dateStr => {
+    const idx = data.daily.time.indexOf(dateStr);
+    if (idx === -1) return null;
+    const hi = data.daily.temperature_2m_max[idx];
+    const lo = data.daily.temperature_2m_min[idx];
+    if (hi === null || hi === undefined || lo === null || lo === undefined) return null;
+    return {
+      date: dateStr,
+      hi: Math.round(hi),
+      lo: Math.round(lo),
+      precip: data.daily.precipitation_probability_mean ? data.daily.precipitation_probability_mean[idx] : null,
+      code: data.daily.weathercode ? data.daily.weathercode[idx] : null
+    };
+  }).filter(Boolean);
+
+  if (rows.length === 0) throw new Error("target dates not yet in forecast range");
+  return rows;
+}
+
+function renderLiveCard(key, rows){
+  const body = document.getElementById("wc-body-" + key);
+  const badge = document.getElementById("wc-badge-" + key);
+  badge.textContent = "Live forecast";
+  badge.classList.add("live");
+  const totalDays = WEATHER_TARGETS[key].dates.length;
+  body.innerHTML = `
+    <div class="wc-daylist">
+      ${rows.map(r => `
+        <div class="wc-day">
+          <div class="d-date">${fmtDate(r.date)}</div>
+          <div class="d-icon">${weatherIcon(r.code)}</div>
+          <div class="d-hi">${r.hi}°</div>
+          <div class="d-lo">${r.lo}°</div>
+          ${r.precip !== null ? `<div class="d-precip">${r.precip}% precip</div>` : ""}
+        </div>`).join("")}
+    </div>
+    <p class="wc-desc">Live forecast for ${rows.length} of ${totalDays} trip days in range — the rest fill in as the date gets closer.</p>
+  `;
+}
+
+function markHistorical(key, reasonNote){
+  const badge = document.getElementById("wc-badge-" + key);
+  badge.textContent = "Historical avg";
+  badge.classList.remove("live");
+  if (reasonNote){
+    const body = document.getElementById("wc-body-" + key);
+    let n = body.querySelector(".wc-fallback-note");
+    if (!n){
+      n = document.createElement("p");
+      n.className = "wc-fallback-note wc-desc";
+      body.appendChild(n);
+    }
+    n.textContent = reasonNote;
+  }
+}
+
+async function refreshAllWeather(){
+  const btn = document.getElementById("refreshWeatherBtn");
+  btn.disabled = true;
+  btn.classList.add("spinning");
+  const note = document.getElementById("weatherNote");
+  note.textContent = "Checking live forecast…";
+
+  const results = await Promise.allSettled([
+    fetchLiveWeather("steamboat"),
+    fetchLiveWeather("denver")
+  ]);
+
+  let anyLive = false;
+  if (results[0].status === "fulfilled") { renderLiveCard("steamboat", results[0].value); anyLive = true; }
+  else { markHistorical("steamboat", "Live forecast not open yet for these dates — showing historical averages instead."); }
+
+  if (results[1].status === "fulfilled") { renderLiveCard("denver", results[1].value); anyLive = true; }
+  else { markHistorical("denver", "Live forecast not open yet for these dates — showing historical averages instead."); }
+
+  note.textContent = anyLive
+    ? "Live data shown where available; historical averages fill in the rest."
+    : "Historical averages, not a forecast — real forecasts don't reach this far out yet.";
+
+  const stamp = document.getElementById("wc-lastchecked");
+  stamp.textContent = "Last checked: " + new Date().toLocaleString("en-US", {hour:"numeric", minute:"2-digit", month:"short", day:"numeric"});
+
+  btn.disabled = false;
+  btn.classList.remove("spinning");
+}
+
+document.getElementById("refreshWeatherBtn").addEventListener("click", refreshAllWeather);
+refreshAllWeather();
+
+</script>
+</body>
+</html>
