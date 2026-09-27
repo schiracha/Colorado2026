@@ -378,13 +378,13 @@
         <span class="wc-dates">Sep 25 – Oct 1</span>
         <div class="wc-body" id="wc-body-steamboat">
           <div class="wc-daylist">
-            <div class="wc-day"><div class="d-date">Sep 25</div><div class="d-icon">🌤️</div><div class="d-hi">65°</div><div class="d-lo">42°</div><div class="d-precip">Partly cloudy</div></div>
-            <div class="wc-day"><div class="d-date">Sep 26</div><div class="d-icon">☀️</div><div class="d-hi">73°</div><div class="d-lo">43°</div><div class="d-precip">Mostly sunny</div></div>
-            <div class="wc-day"><div class="d-date">Sep 27</div><div class="d-icon">🌤️</div><div class="d-hi">74°</div><div class="d-lo">45°</div><div class="d-precip">Partly cloudy</div></div>
-            <div class="wc-day"><div class="d-date">Sep 28</div><div class="d-icon">⛈️</div><div class="d-hi">65°</div><div class="d-lo">39°</div><div class="d-precip">0.14in · storms</div></div>
-            <div class="wc-day"><div class="d-date">Sep 29</div><div class="d-icon">🌧️</div><div class="d-hi">66°</div><div class="d-lo">40°</div><div class="d-precip">0.04in · showers</div></div>
-            <div class="wc-day"><div class="d-date">Sep 30</div><div class="d-icon">☀️</div><div class="d-hi">70°</div><div class="d-lo">39°</div><div class="d-precip">Sunny</div></div>
-            <div class="wc-day"><div class="d-date">Oct 1</div><div class="d-icon">☀️</div><div class="d-hi">73°</div><div class="d-lo">41°</div><div class="d-precip">Sunny</div></div>
+            <div class="wc-day"><div class="d-date">Fri, Sep 25</div><div class="d-icon">🌤️</div><div class="d-hi">65°</div><div class="d-lo">42°</div><div class="d-precip">Partly cloudy</div></div>
+            <div class="wc-day"><div class="d-date">Sat, Sep 26</div><div class="d-icon">☀️</div><div class="d-hi">73°</div><div class="d-lo">43°</div><div class="d-precip">Mostly sunny</div></div>
+            <div class="wc-day"><div class="d-date">Sun, Sep 27</div><div class="d-icon">🌤️</div><div class="d-hi">74°</div><div class="d-lo">45°</div><div class="d-precip">Partly cloudy</div></div>
+            <div class="wc-day"><div class="d-date">Mon, Sep 28</div><div class="d-icon">⛈️</div><div class="d-hi">65°</div><div class="d-lo">39°</div><div class="d-precip">0.14in · storms</div></div>
+            <div class="wc-day"><div class="d-date">Tue, Sep 29</div><div class="d-icon">🌧️</div><div class="d-hi">66°</div><div class="d-lo">40°</div><div class="d-precip">0.04in · showers</div></div>
+            <div class="wc-day"><div class="d-date">Wed, Sep 30</div><div class="d-icon">☀️</div><div class="d-hi">70°</div><div class="d-lo">39°</div><div class="d-precip">Sunny</div></div>
+            <div class="wc-day"><div class="d-date">Thu, Oct 1</div><div class="d-icon">☀️</div><div class="d-hi">73°</div><div class="d-lo">41°</div><div class="d-precip">Sunny</div></div>
           </div>
           <p class="wc-desc">Pulled Sep 22 from Weather Underground's 10-day forecast — genuinely live, not historical average. Warmer than the seasonal norm for most of the week, with one wetter stretch Sep 28–29 (scattered storms/showers) before clearing back up. Mornings still cold at elevation even on the warm days.</p>
           <div class="wc-tags"><span class="tag">Warmer than normal</span><span class="tag">Wet Sep 28–29</span><span class="tag">Cold mornings</span></div>
@@ -1702,7 +1702,7 @@ function weatherIcon(code){
 }
 function fmtDate(iso){
   const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString("en-US", {month:"short", day:"numeric"});
+  return d.toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"});
 }
 
 async function fetchLiveWeather(key){
